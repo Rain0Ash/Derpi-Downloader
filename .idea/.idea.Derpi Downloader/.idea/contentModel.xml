@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Rain0Ash\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Rain0Ash\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_Derpi Downloader.2050436904.00" t="ExcludeRecursive" />
+    <e p="H:\GitHub\Core\Derpi Downloader" t="IncludeRecursive">
+      <e p=".gitignore" t="Include" />
+      <e p="App.config" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Derpi Downloader.csproj" t="IncludeRecursive" />
+      <e p="Derpi Downloader.sln" t="IncludeFlat" />
+      <e p="Derpi Downloader.sln.DotSettings" t="Include" />
+      <e p="etc" t="Include">
+        <e p="download.png" t="Include" />
+        <e p="settings.png" t="Include" />
+        <e p="start.png" t="Include" />
+      </e>
+      <e p="icon.ico" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Release" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="Derpi Downloader.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="Program" t="Include">
+        <e p="Additionals" t="Include">
+          <e p="AdditionalsAPI.cs" t="Include" />
+          <e p="AdditionalsForm.cs" t="Include" />
+          <e p="AdditionalsForm.Designer.cs" t="Include" />
+          <e p="DuplicateSearch" t="Include">
+            <e p="DuplicateSearchForm.cs" t="Include" />
+            <e p="DuplicateSearchForm.Designer.cs" t="Include" />
+          </e>
+          <e p="MakeAuthorsList" t="Include">
+            <e p="AuthorsList.cs" t="Include" />
+            <e p="AuthorsListForm.cs" t="Include" />
+            <e p="AuthorsListForm.Designer.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Common" t="Include">
+          <e p="DownloadRequest.cs" t="Include" />
+          <e p="LayoutGUI.cs" t="Include" />
+          <e p="TextBoxes" t="Include">
+            <e p="DerpiAdvancedPathTextBox.cs" t="Include" />
+            <e p="SearchQueryTextBox.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Download" t="Include">
+          <e p="API" t="Include">
+            <e p="DerpiAPI.cs" t="Include" />
+            <e p="JsonAPI.cs" t="Include" />
+          </e>
+          <e p="Json" t="Include">
+            <e p="DerpiImage.cs" t="Include" />
+          </e>
+          <e p="Tasks" t="Include">
+            <e p="DownloadTask.cs" t="Include" />
+            <e p="DownloadTask.Download.cs" t="Include" />
+            <e p="DownloadTask.Save.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Globals" t="Include">
+          <e p="Globals.cs" t="Include" />
+        </e>
+        <e p="Localization" t="Include">
+          <e p="CultureStrings.cs" t="Include" />
+          <e p="Localization.cs" t="Include" />
+        </e>
+        <e p="MainForm.cs" t="Include" />
+        <e p="MainForm.Designer.cs" t="Include" />
+        <e p="MainForm.resx" t="Include" />
+        <e p="Registry" t="Include">
+          <e p="ConfigKeys.cs" t="Include" />
+        </e>
+        <e p="Settings" t="Include">
+          <e p="Controls" t="Include">
+            <e p="APIControl.cs" t="Include" />
+            <e p="APIControl.Designer.cs" t="Include" />
+            <e p="APITextBox.cs" t="Include" />
+          </e>
+          <e p="ProxyForm" t="Include">
+            <e p="ProxyForm.cs" t="Include" />
+            <e p="ProxyForm.Designer.cs" t="Include" />
+          </e>
+          <e p="SettingsForm.cs" t="Include" />
+          <e p="SettingsForm.Designer.cs" t="Include" />
+        </e>
+        <e p="TaskCreator" t="Include">
+          <e p="Control" t="Include">
+            <e p="DownloadControl" t="Include">
+              <e p="DownloadControl.cs" t="Include" />
+              <e p="DownloadControl.Designer.cs" t="Include" />
+            </e>
+            <e p="DownloadTaskControl.cs" t="Include" />
+            <e p="DownloadTaskControl.Designer.cs" t="Include" />
+          </e>
+          <e p="Form" t="Include">
+            <e p="TaskCreatorForm.cs" t="Include" />
+            <e p="TaskCreatorForm.Designer.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Program.cs" t="Include" />
+      <e p="README.MD" t="Include" />
+      <e p="Resources" t="Include">
+        <e p="icon.ico" t="Include" />
+        <e p="Resource.Designer.cs" t="Include" />
+        <e p="Resource.resx" t="Include" />
+      </e>
+    </e>
+  </component>
+</project>
