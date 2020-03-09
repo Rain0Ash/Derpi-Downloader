@@ -9,9 +9,9 @@ Images will be downloaded and sorted according to request.
 
 - **P.S. I need feedback - your ideas and messages about bugs / crashes.**
 
-![Start](https://github.com/Rain0Ash/Derpi-Downloader-Core/blob/master/etc/start.png)
-![Settings](https://github.com/Rain0Ash/Derpi-Downloader-Core/blob/master/etc/settings.png)
-![Download](https://github.com/Rain0Ash/Derpi-Downloader-Core/blob/master/etc/download.png)
+![Start](https://github.com/Rain0Ash/Derpi-Downloader/blob/master/etc/start.png)
+![Settings](https://github.com/Rain0Ash/Derpi-Downloader/blob/master/etc/settings.png)
+![Download](https://github.com/Rain0Ash/Derpi-Downloader/blob/master/etc/download.png)
 
 
 - **Coming Soon** - additional features as search duplicate images and get authors of already downloaded images with derpibooru watch syntax
