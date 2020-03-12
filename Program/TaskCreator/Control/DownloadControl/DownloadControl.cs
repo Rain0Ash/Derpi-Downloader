@@ -27,7 +27,7 @@ namespace Derpi_Downloader.Forms
             {
                 if (CurrentTasks >= MaximumTasks)
                 {
-                    DownloadTaskControl completedTask = _taskerList.FirstOrDefault(task => task.Task?.IsCompleted == true || task.Task?.IsStarted != true && task.EmptySearchRequest && task.DownloadPathIsDefault);
+                    DownloadTaskControl completedTask = _taskerList.FirstOrDefault(task => task.Task?.IsCompleted == true && task.IsFullDownload || task.Task?.IsStarted != true && task.EmptySearchRequest && task.DownloadPathIsDefault);
                     
                     if (completedTask == null)
                     {

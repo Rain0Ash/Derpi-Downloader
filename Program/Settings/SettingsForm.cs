@@ -130,8 +130,7 @@ namespace Derpi_Downloader.Forms
                 new []{Globals.Localization.Yes, Globals.Localization.No})
                 .ShowDialog();
             
-            if (dialogResult !=
-                DialogResult.Yes)
+            if (dialogResult != DialogResult.Yes)
             {
                 return;
             }

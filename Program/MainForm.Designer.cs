@@ -161,7 +161,6 @@ using Common_Library.Images;
             _logRichTextBox.BorderStyle = BorderStyle.None;
             _logRichTextBox.ScrollBars = RichTextBoxScrollBars.None;
             _logRichTextBox.Reversed = false;
-            _logRichTextBox.MaximumLength = 10;
             _logRichTextBox.BorderStyle = BorderStyle.Fixed3D;
             Globals.Logger.Logged += _logRichTextBox.Log;
             

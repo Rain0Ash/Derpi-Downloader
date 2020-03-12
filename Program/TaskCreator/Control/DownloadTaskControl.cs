@@ -99,6 +99,30 @@ namespace Derpi_Downloader.Forms
 
         public DownloadTask Task { get; private set; }
 
+        public Int32 CurrentDownloadedImages
+        {
+            get
+            {
+                return _downloadValueLabel.CurrentValue;
+            }
+        }
+        
+        public Int32 CountOfImages
+        {
+            get
+            {
+                return _downloadValueLabel.MaximumValue;
+            }
+        }
+        
+        public Boolean IsFullDownload
+        {
+            get
+            {
+                return CurrentDownloadedImages == CountOfImages;
+            }
+        }
+        
         public event Handlers.EmptyHandler Completed;
         public event Handlers.EmptyHandler NeedClosing;
 
@@ -162,8 +186,10 @@ namespace Derpi_Downloader.Forms
             Log(new LogMessage(Globals.Localization.DownloadCompleted, MessageType.Good));
             _pauseResumeButton.Visible = false;
             _pauseResumeButton.Enabled = false;
+            _startDownloadButton.ForeColor = IsFullDownload ? _startDownloadButton.ForeColor : Color.Red;
             _startDownloadButton.Enabled = true;
             _startDownloadButton.Visible = true;
+            _downloadValueLabel.ForeColor = IsFullDownload ? _downloadValueLabel.ForeColor : Color.Red;
             UpdateText();
             Completed?.Invoke();
         }
@@ -267,11 +293,13 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.Enabled = true;
             _pauseResumeButton.Visible = false;
             _pauseResumeButton.Enabled = false;
+            _startDownloadButton.ResetForeColor();
             _startDownloadButton.Enabled = true;
             _startDownloadButton.Visible = true;
             _downloadProgressBar.Value = 0;
             _downloadValueLabel.CurrentValue = 0;
             _downloadValueLabel.MaximumValue = 0;
+            _downloadValueLabel.ResetForeColor();
             _downloadValueLabel.Visible = false;
             UpdateText();
         }

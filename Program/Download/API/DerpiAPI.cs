@@ -26,7 +26,7 @@ namespace Derpi_Downloader.API
             {
                 const String matchPattern = "^" + SearchSiteRegexPart + SearchRegexPart + ParametersRegexPart + "$";
                 
-                return StringUtils.CheckWellFormed(search) && Regex.IsMatch(Uri.UnescapeDataString(search),
+                return StringUtils.IsBracketsWellFormed(search) && Regex.IsMatch(Uri.UnescapeDataString(search),
                            matchPattern, RegexOptions.Compiled,
                            new TimeSpan(0, 0, 3));
             }

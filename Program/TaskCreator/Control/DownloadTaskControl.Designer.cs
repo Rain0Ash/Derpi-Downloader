@@ -79,7 +79,6 @@ namespace Derpi_Downloader.Forms
             _logRichTextBox.Font = new Font(Font.Name, Font.Size - 1);
             _logRichTextBox.BorderStyle = BorderStyle.Fixed3D;
             _logRichTextBox.Reversed = false;
-            _logRichTextBox.MaximumLength = 5;
 
             _downloadProgressBar.Size = new Size(_startDownloadButton.Size.Width - 3, 5);
             _downloadProgressBar.Location = new Point(5, 115);

@@ -10,11 +10,6 @@
       <e p="Derpi Downloader.csproj" t="IncludeRecursive" />
       <e p="Derpi Downloader.sln" t="IncludeFlat" />
       <e p="Derpi Downloader.sln.DotSettings" t="Include" />
-      <e p="etc" t="Include">
-        <e p="download.png" t="Include" />
-        <e p="settings.png" t="Include" />
-        <e p="start.png" t="Include" />
-      </e>
       <e p="icon.ico" t="Include" />
       <e p="obj" t="ExcludeRecursive">
         <e p="Release" t="Include">

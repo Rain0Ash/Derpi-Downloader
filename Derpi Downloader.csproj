@@ -24,6 +24,7 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>Resource.resx</DependentUpon>
       </Compile>
+      <Compile Remove="images\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +32,11 @@
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>Resource.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Remove="images\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="images\**" />
     </ItemGroup>
 
 </Project>
