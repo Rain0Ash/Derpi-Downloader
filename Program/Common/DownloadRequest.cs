@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
-using Common_Library.Utils;
+using Common_Library.Utils.IO;
 using Derpi_Downloader.API;
 
 namespace Derpi_Downloader.Settings
@@ -19,7 +19,7 @@ namespace Derpi_Downloader.Settings
         ThumbSmall,
         ThumbTiny
     }
-    
+
     public sealed class DownloadRequest
     {
         public readonly String SearchQuery;
@@ -28,17 +28,17 @@ namespace Derpi_Downloader.Settings
         public readonly RequestImageType ImageType;
 
         public DownloadRequest(String searchQuery)
-            : this(searchQuery, Globals.QueueAutoDownload)
+            : this(searchQuery, Globals.QueueAutoDownload.GetValue())
         {
         }
-        
+
         public DownloadRequest(String searchQuery, Boolean autoDownload)
             : this(searchQuery, Globals.CurrentDownloadPath, autoDownload)
         {
         }
-        
+
         public DownloadRequest(String searchQuery, String downloadPath, RequestImageType imageType)
-            : this(searchQuery, downloadPath, Globals.QueueAutoDownload, imageType)
+            : this(searchQuery, downloadPath, Globals.QueueAutoDownload.GetValue(), imageType)
         {
         }
 

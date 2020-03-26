@@ -9,11 +9,11 @@ using Common_Library;
 using Common_Library.Exceptions;
 using Common_Library.Logger;
 using Common_Library.Objects;
-using Common_Library.Utils;
+using Common_Library.Utils.Math;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 using Path = Common_Library.LongPath.Path;
+
 // ReSharper disable ConvertToAutoProperty
 
 namespace Derpi_Downloader.Download
@@ -36,7 +36,7 @@ namespace Derpi_Downloader.Download
                 }
 
                 _isPaused = value;
-                
+
                 if (_isPaused)
                 {
                     Paused?.Invoke();
@@ -62,7 +62,7 @@ namespace Derpi_Downloader.Download
         public Int32 Pages { get; private set; }
 
         private Int32 _downloadedImages;
-        
+
         public Int32 DownloadedImages
         {
             get
@@ -96,8 +96,8 @@ namespace Derpi_Downloader.Download
         }
 
         public EventQueueList<Search> Images { get; } = new EventQueueList<Search>();
-        public EventQueueList<LogMessage> Log { get; }= new EventQueueList<LogMessage>();
-        
+        public EventQueueList<LogMessage> Log { get; } = new EventQueueList<LogMessage>();
+
         public delegate void DownloadTaskHandler(EventQueueList<Search> images, EventQueueList<LogMessage> log);
 
         private Boolean _isInvalid;
@@ -131,6 +131,7 @@ namespace Derpi_Downloader.Download
 
 
         public delegate void LogHandler(EventQueueList<LogMessage> log);
+
         public event LogHandler Invalid;
         public event DownloadTaskHandler Completed;
 
@@ -139,6 +140,7 @@ namespace Derpi_Downloader.Download
         private readonly String _saveDirectory;
 
         private Boolean _saveToDisk = true;
+
         public Boolean SaveToDisk
         {
             get
@@ -150,6 +152,7 @@ namespace Derpi_Downloader.Download
                 _saveToDisk = value;
             }
         }
+
         private Boolean _autoDisposeOnComplete = true;
 
         public Boolean AutoDisposeOnComplete
@@ -166,24 +169,26 @@ namespace Derpi_Downloader.Download
 
         private readonly Int32 _firstPageNumber;
         private readonly Int32 _countOfPages;
-        
+
         private readonly CancellationTokenSource _tokenSource;
         private readonly CancellationToken _token;
+
         public DownloadTask(String searchQuery, String savePath = null, Int32 firstPageNumber = 1, Int32 countOfPages = -1)
         {
             SearchQuery = searchQuery;
-            _firstPageNumber = MathUtils.Range(firstPageNumber, 1);
-            _countOfPages = MathUtils.Range(countOfPages, -1);
-            
+            _firstPageNumber = MathUtils.ToRange(firstPageNumber, 1);
+            _countOfPages = MathUtils.ToRange(countOfPages, -1);
+
             _savePath = savePath ?? Globals.CurrentDownloadPath;
-            
+
             _saveDirectory = Path.GetDirectoryName(_savePath);
 
             _tokenSource = new CancellationTokenSource();
             _token = _tokenSource.Token;
         }
-        
+
         public Boolean IsStarted;
+
         public Task StartTaskAsync()
         {
             if (IsInvalid)
@@ -191,17 +196,17 @@ namespace Derpi_Downloader.Download
                 Log.Add(new LogMessage(Globals.Localization.StartedInvalidTaskError, MessageType.CriticalWarning));
                 return Task.CompletedTask;
             }
-            
+
             if (IsCompleted)
             {
                 return Task.CompletedTask;
             }
-            
+
             if (!IsInitialized)
             {
                 throw new NotInitializedException("Initialize first");
             }
-            
+
             if (IsStarted)
             {
                 throw new AlreadyInitializedException();
@@ -241,7 +246,7 @@ namespace Derpi_Downloader.Download
                 }
             }
         }
-        
+
         public void Resume()
         {
             IsPaused = false;

@@ -5,9 +5,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Common_Library.Logger;
-using Common_Library.Utils;
+using Common_Library.Utils.IO;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Download
@@ -15,6 +14,7 @@ namespace Derpi_Downloader.Download
     public partial class DownloadTask
     {
         public event SearchHandler ImageSaved;
+
         private async Task SaveImageAsync(Search search, Byte[] image, String formatedSavePath = null)
         {
             if (IsInvalid)
@@ -28,10 +28,10 @@ namespace Derpi_Downloader.Download
 
             if (String.IsNullOrEmpty(formatedDirectoryPath))
             {
-                Log.Add(new LogMessage(Globals.Localization.FormatDirectoryError, MessageType.Warning, new[]{search.id.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.FormatDirectoryError, MessageType.Warning, new[] {search.id.ToString()}));
                 return;
             }
-            
+
             if (!DirectoryUtils.TryCreateDirectory(formatedDirectoryPath, PathAction.None))
             {
                 Log.Add(new LogMessage(Globals.Localization.CreateDirectoryError, MessageType.CriticalWarning));
@@ -58,7 +58,7 @@ namespace Derpi_Downloader.Download
                 }
 
                 await using FileStream sourceStream = new FileStream(formatedSavePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                
+
                 await sourceStream.WriteAsync(image, 0, image.Length, _token).ConfigureAwait(true);
 
                 ImageSaved?.Invoke(search);

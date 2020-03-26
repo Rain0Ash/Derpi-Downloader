@@ -15,7 +15,7 @@ namespace System.Windows.Forms
             MaxLength = DerpiAPI.LengthAPI;
             CheckValidFormat();
         }
-        
+
         protected override void CheckValidFormatColor()
         {
             if (Text.Length == 0)

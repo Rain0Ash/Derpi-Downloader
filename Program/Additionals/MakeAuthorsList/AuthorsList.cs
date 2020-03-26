@@ -27,18 +27,19 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
         private readonly IEnumerable<String> _files;
 
-        public AuthorsList(IEnumerable<PathObject> includedPaths, IEnumerable<PathObject> excludedPaths = null, Dictionary<String, String> regexDictionary = null)
+        public AuthorsList(IEnumerable<PathObject> includedPaths, IEnumerable<PathObject> excludedPaths = null,
+            Dictionary<String, String> regexDictionary = null)
         {
             includedPaths = includedPaths?.ToArray();
-            
+
             if (includedPaths?.Any() != true)
             {
                 _includedPaths = null;
                 return;
             }
-            
+
             _includedPaths = includedPaths;
-            
+
             if (regexDictionary?.Keys.Any() != true)
             {
                 regexDictionary = new Dictionary<String, String>
@@ -48,7 +49,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             }
 
             _regexDictionary = regexDictionary;
-            
+
             _files = AdditionalsAPI.GetFiles(_includedPaths, excludedPaths?.ToList() ?? new List<PathObject>())
                 .Where(file => AdditionalsAPI.AllowedExtensions.Contains(file.Extension?.ToUpper()))
                 .Select(file => Path.GetFileNameWithoutExtension(file.Name));
@@ -78,7 +79,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 .ToList();
 
             artists.Sort();
-            
+
             return artists;
         }
 
@@ -95,7 +96,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                     if (pattern == null)
                     {
                         FileAnalyzed?.Invoke();
-                        return new []{String.Empty};
+                        return new[] {String.Empty};
                     }
 
                     selectArtistRegex = new Regex(pattern);
@@ -103,7 +104,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 catch (ArgumentException)
                 {
                     FileAnalyzed?.Invoke();
-                    return new []{String.Empty};
+                    return new[] {String.Empty};
                 }
 
                 FileAnalyzed?.Invoke();
@@ -116,7 +117,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             }
             catch
             {
-                return new []{String.Empty};
+                return new[] {String.Empty};
             }
         }
 

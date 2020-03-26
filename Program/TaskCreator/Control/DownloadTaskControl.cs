@@ -9,16 +9,14 @@ using Common_Library.GUI.WinForms.Controls;
 using Common_Library.Images;
 using Common_Library.Localization;
 using Common_Library.Logger;
+using Common_Library.Utils.IO;
 using Derpi_Downloader.API;
 using Derpi_Downloader.Download;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Forms
 {
-    using Common_Library.Utils;
-
     public partial class DownloadTaskControl : LocalizationControl
     {
         public new String Text
@@ -49,9 +47,9 @@ namespace Derpi_Downloader.Forms
             : this(request.SearchQuery, request.DownloadPath, request.AutoDownload, request.ImageType)
         {
         }
-        
+
         public DownloadTaskControl(String search, String path, RequestImageType imageType)
-            : this(search, path, Globals.QueueAutoDownload, imageType)
+            : this(search, path, Globals.QueueAutoDownload.GetValue(), imageType)
         {
         }
 
@@ -60,10 +58,10 @@ namespace Derpi_Downloader.Forms
             InitializeComponent();
             _searchQueryTextBox.Text = search;
             _downloadPathTextBox.Text = path;
-            
+
             Log(new LogMessage(Globals.Localization.Created, MessageType.Action));
 
-            if (autoStartDownload && DerpiAPI.CheckAPI(Globals.APIKey))
+            if (autoStartDownload && Globals.APIKey.IsValid)
             {
                 OnStartDownloadButton_Click(null, EventArgs.Empty);
             }
@@ -72,7 +70,7 @@ namespace Derpi_Downloader.Forms
 
         private void OnTextChanged()
         {
-            _startDownloadButton.Enabled = Task?.IsStarted != true && DerpiAPI.CheckAPI(Globals.APIKey) &&
+            _startDownloadButton.Enabled = Task?.IsStarted != true && Globals.APIKey.IsValid &&
                                            _searchQueryTextBox.ValidSearchQuery &&
                                            _downloadPathTextBox.IsValid();
         }
@@ -83,7 +81,7 @@ namespace Derpi_Downloader.Forms
             {
                 return;
             }
-            
+
             _searchQueryLabel.Text = Globals.Localization.SearchQueryLabel;
             _downloadPathLabel.Text = Globals.Localization.DownloadPathLabel;
             _startDownloadButton.Text = Task?.IsCompleted != true && Task?.IsInvalid != true ? Globals.Localization.AddTaskButton : Globals.Localization.Close;
@@ -92,9 +90,14 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.PathTypeChangeToAbsoluteToolTip = Globals.Localization.PathTypeChangeButtonToAbsoluteToolTip;
             _downloadPathTextBox.PathFormatHelpToolTip = Globals.Localization.FormatHelpButtonToolTip;
             _downloadPathTextBox.PathDialogToolTip = Globals.Localization.FolderDialogButtonToolTip;
-            _helpToolTip.SetToolTip(_removeOrRestartDownloadButton, Task?.IsCompleted != true && Task?.IsInvalid != true ? Globals.Localization.CloseDownloadTaskControlToolTip : Globals.Localization.ReuseDownloadTaskControlToolTip);
+            _helpToolTip.SetToolTip(_removeOrRestartDownloadButton,
+                Task?.IsCompleted != true && Task?.IsInvalid != true
+                    ? Globals.Localization.CloseDownloadTaskControlToolTip
+                    : Globals.Localization.ReuseDownloadTaskControlToolTip);
             LogRichTextBox?.UpdateLog();
-            _removeOrRestartDownloadButton.Image = new Bitmap(Task?.IsCompleted != true && Task?.IsInvalid != true ? Images.Others.XButton : Images.Lineal.Reuse, new Size(_removeOrRestartDownloadButton.Size.Width / 2, _removeOrRestartDownloadButton.Size.Height / 2));
+            _removeOrRestartDownloadButton.Image =
+                new Bitmap(Task?.IsCompleted != true && Task?.IsInvalid != true ? Images.Others.XButton : Images.Lineal.Reuse,
+                    new Size(_removeOrRestartDownloadButton.Size.Width / 2, _removeOrRestartDownloadButton.Size.Height / 2));
         }
 
         public DownloadTask Task { get; private set; }
@@ -106,7 +109,7 @@ namespace Derpi_Downloader.Forms
                 return _downloadValueLabel.CurrentValue;
             }
         }
-        
+
         public Int32 CountOfImages
         {
             get
@@ -114,7 +117,7 @@ namespace Derpi_Downloader.Forms
                 return _downloadValueLabel.MaximumValue;
             }
         }
-        
+
         public Boolean IsFullDownload
         {
             get
@@ -122,7 +125,7 @@ namespace Derpi_Downloader.Forms
                 return CurrentDownloadedImages == CountOfImages;
             }
         }
-        
+
         public event Handlers.EmptyHandler Completed;
         public event Handlers.EmptyHandler NeedClosing;
 
@@ -133,7 +136,7 @@ namespace Derpi_Downloader.Forms
                 StartDownloadAsync(_searchQueryTextBox.Text);
             }
         }
-        
+
         private void OnStartDownloadButton_Click(Object sender, EventArgs e)
         {
             if (Task?.IsCompleted != true && Task?.IsInvalid != true)
@@ -157,7 +160,7 @@ namespace Derpi_Downloader.Forms
                 Task.Resume();
                 return;
             }
-                
+
             Task.Pause();
         }
 
@@ -169,20 +172,20 @@ namespace Derpi_Downloader.Forms
             _downloadProgressBar.Step = 1;
             _downloadProgressBar.Value = 0;
         }
-        
+
         private void OnTaskStarted()
         {
             _startDownloadButton.Visible = false;
             _pauseResumeButton.Enabled = true;
             _pauseResumeButton.Visible = true;
-            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchStarted, MessageType.Good, new []{Task.SearchQuery}));
+            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchStarted, MessageType.Good, new[] {Task.SearchQuery}));
             Log(new LogMessage(Globals.Localization.DownloadStarted, MessageType.Good));
             UpdateText();
         }
 
         private void OnTaskCompleted(EventQueueList<Search> images, EventQueueList<LogMessage> log)
         {
-            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchCompleted, MessageType.Good, new []{Task.SearchQuery}));
+            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchCompleted, MessageType.Good, new[] {Task.SearchQuery}));
             Log(new LogMessage(Globals.Localization.DownloadCompleted, MessageType.Good));
             _pauseResumeButton.Visible = false;
             _pauseResumeButton.Enabled = false;
@@ -196,7 +199,7 @@ namespace Derpi_Downloader.Forms
 
         private void OnTaskInvalid(EventQueueList<LogMessage> log)
         {
-            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchInvalid, MessageType.Error, new []{Task?.SearchQuery ?? String.Empty}));
+            Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchInvalid, MessageType.Error, new[] {Task?.SearchQuery ?? String.Empty}));
             _pauseResumeButton.Visible = false;
             _pauseResumeButton.Enabled = false;
             _startDownloadButton.Enabled = true;
@@ -245,11 +248,12 @@ namespace Derpi_Downloader.Forms
 
             UpdateText();
         }
-        
+
         private void Log(ref LogMessage message)
         {
             Log(message);
         }
+
         private void Log(LogMessage message)
         {
             LogRichTextBox?.Log(message);
@@ -278,10 +282,10 @@ namespace Derpi_Downloader.Forms
                 Close();
                 return;
             }
-            
+
             if (!Task.IsInvalid && !Task.IsCompleted)
             {
-                Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadTaskIsCanceled, MessageType.Warning, new []{Task.SearchQuery ?? String.Empty}));
+                Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadTaskIsCanceled, MessageType.Warning, new[] {Task.SearchQuery ?? String.Empty}));
                 Task.RemoveTask();
                 Close();
                 return;
@@ -303,7 +307,7 @@ namespace Derpi_Downloader.Forms
             _downloadValueLabel.Visible = false;
             UpdateText();
         }
-        
+
         private async void StartDownloadAsync(String searchRequest)
         {
             BeforeTaskStarted();

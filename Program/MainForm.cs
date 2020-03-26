@@ -1,4 +1,4 @@
-﻿﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
@@ -8,7 +8,6 @@ using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Common_Library.Logger;
 using Derpi_Downloader.API;
-using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Forms
@@ -16,10 +15,12 @@ namespace Derpi_Downloader.Forms
     public partial class MainForm : CenterForm
     {
         private String[] _args;
+
         public MainForm(String[] args = null)
         {
             _args = args;
             InitializeComponent();
+            FormClosing += OnForm_Closing;
         }
 
         protected override void UpdateText()
@@ -29,7 +30,7 @@ namespace Derpi_Downloader.Forms
             #else
             Text = Globals.Localization.MainForm;
             #endif
-            
+
             _helpToolTip.SetToolTip(_taskCreatorButton, Globals.Localization.DownloadForm);
             _helpToolTip.SetToolTip(_settingsButton, Globals.Localization.SettingsForm);
             _helpToolTip.SetToolTip(_aboutButton, Globals.Localization.AboutProgramTitle);
@@ -43,7 +44,7 @@ namespace Derpi_Downloader.Forms
         {
             CenterToScreen();
             Globals.Logger.Log(new LogMessage(Globals.Localization.ProgramSuccessfullyStarted, MessageType.Action));
-            if (!DerpiAPI.CheckAPI(Globals.APIKey))
+            if (!Globals.APIKey.IsValid)
             {
                 new MessageForm(Globals.Localization.FirstKnowText,
                     Globals.Localization.FirstKnowTitle, Images.Basic.Information,
@@ -57,9 +58,19 @@ namespace Derpi_Downloader.Forms
             _args = null;
         }
 
+        private void OnForm_Closing(Object sender, FormClosingEventArgs e)
+        {
+            if (ContainsFocus && e.CloseReason == CloseReason.UserClosing && _downloadControl.HasDownload &&
+                new MessageForm("Остались незавершенные загрузки\nВы действительно хотите закрыть программу?", "Закрыть программу?",
+                    Resources.Resource.icon.ToBitmap(), Resources.Resource.icon.ToBitmap(), MessageBoxButtons.YesNo, new []{Globals.Localization.Yes, Globals.Localization.No}).Show() != DialogResult.Yes)
+            {
+                e.Cancel = true;
+            }
+        }
+
         private void InitializeDownloadTaskControls(String[] args = null)
         {
-            if (!DerpiAPI.CheckAPI(Globals.APIKey))
+            if (!Globals.APIKey.IsValid)
             {
                 return;
             }
@@ -73,7 +84,7 @@ namespace Derpi_Downloader.Forms
             }
             else
             {
-                if (DerpiAPI.CheckAPI(Globals.APIKey) && _downloadControl.CurrentTasks <= 0)
+                if (Globals.APIKey.IsValid && _downloadControl.CurrentTasks <= 0)
                 {
                     _downloadControl.AddDownloadTaskControl();
                 }
@@ -83,17 +94,14 @@ namespace Derpi_Downloader.Forms
         private void OpenTaskCreatorForm()
         {
             TaskCreatorForm taskCreatorForm = new TaskCreatorForm();
-            taskCreatorForm.AddTaskControl += request => 
-            {
-                _downloadControl.AddDownloadTaskControl(request);
-            } ;
+            taskCreatorForm.AddTaskControl += request => { _downloadControl.AddDownloadTaskControl(request); };
             taskCreatorForm.IsManualClose = ModifierKeys == Keys.Shift;
             taskCreatorForm.ShowDialog();
         }
 
         private void OnAPIKeyChanged()
         {
-            _taskCreatorButton.Enabled = DerpiAPI.CheckAPI(Globals.APIKey);
+            _taskCreatorButton.Enabled = Globals.APIKey.IsValid;
         }
     }
 }

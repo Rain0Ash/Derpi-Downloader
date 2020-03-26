@@ -67,9 +67,6 @@
         <e p="MainForm.cs" t="Include" />
         <e p="MainForm.Designer.cs" t="Include" />
         <e p="MainForm.resx" t="Include" />
-        <e p="Registry" t="Include">
-          <e p="ConfigKeys.cs" t="Include" />
-        </e>
         <e p="Settings" t="Include">
           <e p="Controls" t="Include">
             <e p="APIControl.cs" t="Include" />

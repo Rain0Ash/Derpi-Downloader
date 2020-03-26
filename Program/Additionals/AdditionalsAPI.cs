@@ -11,15 +11,16 @@ namespace Derpi_Downloader.Additionals
 {
     public static class AdditionalsAPI
     {
-        public static readonly IReadOnlyCollection<String> AllowedExtensions = new[]{
-            ".BMP", ".ICO", ".JPG", ".JPEG", ".PNG", ".TIFF", 
-            ".PSD", ".SAI", 
-            ".SVG", 
-            ".ZIP", ".RAR", ".7Z", ".7ZIP", 
+        public static readonly IReadOnlyCollection<String> AllowedExtensions = new[]
+        {
+            ".BMP", ".ICO", ".JPG", ".JPEG", ".PNG", ".TIFF",
+            ".PSD", ".SAI",
+            ".SVG",
+            ".ZIP", ".RAR", ".7Z", ".7ZIP",
             ".SWF",
             ".MPEG"
         };
-        
+
         public static IEnumerable<FileInfo> GetFiles(IEnumerable<PathObject> includedPaths, IEnumerable<PathObject> excludedPaths)
         {
             HashSet<String> includedFolders = new HashSet<String>();
@@ -41,7 +42,7 @@ namespace Derpi_Downloader.Additionals
                     includedFolders.Add(path.Path);
                 }
             }
-            
+
             foreach (PathObject path in excludedPaths)
             {
                 if (!path.IsExistAsFolder())
@@ -58,7 +59,7 @@ namespace Derpi_Downloader.Additionals
                     excludedFolders.Add(path.Path);
                 }
             }
-            
+
             IEnumerable<FileInfo> files = includedFolders
                 .Except(excludedFolders)
                 .Select(folder => new DirectoryInfo(folder).EnumerateFiles())

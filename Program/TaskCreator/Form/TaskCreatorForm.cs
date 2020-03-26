@@ -12,10 +12,11 @@ namespace Derpi_Downloader.Forms
     public sealed partial class TaskCreatorForm : ParentForm
     {
         public Boolean IsManualClose;
-        
+
         public delegate void DownloadRequestHandler(DownloadRequest request);
 
         public event DownloadRequestHandler AddTaskControl;
+
         public TaskCreatorForm()
         {
             InitializeComponent();
@@ -41,13 +42,13 @@ namespace Derpi_Downloader.Forms
             {
                 return;
             }
-            
+
             AddTaskControl?.Invoke(new DownloadRequest(_searchQueryTextBox.Text, _downloadPathTextBox.Text, _queueAutoDownloadCheckBox.Checked));
             if (!IsManualClose || ModifierKeys == Keys.Control || ModifierKeys == Keys.Shift)
             {
                 Close();
             }
-            
+
             _searchQueryTextBox.Text = String.Empty;
         }
 

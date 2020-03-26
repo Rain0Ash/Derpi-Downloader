@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Common_Library.Localization;
-using Common_Library.Utils;
 
 namespace Derpi_Downloader.Localization
 {
@@ -16,7 +15,7 @@ namespace Derpi_Downloader.Localization
     public sealed class CultureStrings : CultureStringsBase
     {
         private static readonly IEnumerable<Int32> _availableLocalization = new[] {"EN", "RU", "DE"}.Select(code => GetLCID(code.ToLower()));
-        
+
         public override IEnumerable<Int32> AvailableLocalization
         {
             get
@@ -26,6 +25,7 @@ namespace Derpi_Downloader.Localization
         }
 
         private static readonly Int32 RU = GetLCID("ru");
+
         public String ru
         {
             get
@@ -37,8 +37,9 @@ namespace Derpi_Downloader.Localization
                 Localization[RU] = value ?? String.Empty;
             }
         }
-        
+
         private static readonly Int32 DE = GetLCID("de");
+
         public String de
         {
             get
@@ -55,7 +56,7 @@ namespace Derpi_Downloader.Localization
             : this(null)
         {
         }
-        
+
         public CultureStrings(String english, String russian = null, String deutch = null)
             : base(english)
         {

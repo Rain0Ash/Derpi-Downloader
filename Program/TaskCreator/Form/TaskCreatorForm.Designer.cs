@@ -8,6 +8,7 @@ using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
 using Common_Library.Utils;
 using Common_Library.Images;
+using Common_Library.Utils.IO;
 using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.Forms
@@ -24,7 +25,7 @@ namespace Derpi_Downloader.Forms
             _addTaskButton = new Button();
             _helpToolTip = new HelpToolTip();
             SuspendLayout();
-            
+
             _searchQueryLabel.Location = new Point(2, 0);
             _searchQueryLabel.Size = new Size(200, 20);
             _searchQueryLabel.AutoSize = false;
@@ -34,7 +35,7 @@ namespace Derpi_Downloader.Forms
             _downloadPathLabel.Size = new Size(200, 20);
             _downloadPathLabel.AutoSize = false;
             _downloadPathLabel.TextAlign = ContentAlignment.MiddleLeft;
-            
+
             _searchQueryTextBox.Location = new Point(5, 20);
             _searchQueryTextBox.Size = new Size(390, 25);
             _searchQueryTextBox.Multiline = false;
@@ -48,12 +49,12 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Search));
             _downloadPathTextBox.TextChanged += (sender, args) => OnTextChanged();
             _downloadPathTextBox.Text = Globals.CurrentDownloadPath;
-            _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = Path.Combine(str, Globals.CurrentDownloadFileName);
+            _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = Path.Combine(str, Globals.CurrentDownloadFileName.GetValue());
 
             _queueAutoDownloadCheckBox.Location = new Point(5, 95);
             _queueAutoDownloadCheckBox.MinimumSize = new Size(0, 20);
             _queueAutoDownloadCheckBox.AutoSize = true;
-            _queueAutoDownloadCheckBox.Checked = Globals.QueueAutoDownload;
+            _queueAutoDownloadCheckBox.Checked = Globals.QueueAutoDownload.GetValue();
 
             _addTaskButton.Location = new Point(5, 115);
             _addTaskButton.Size = new Size(390, 30);

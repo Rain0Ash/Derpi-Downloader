@@ -14,7 +14,7 @@ namespace Derpi_Downloader.Additionals.DuplicateSearch
         private void InitializeComponent()
         {
             _pathListBox = new PathListBox();
-            
+
             _pathListBox.Size = new Size(300, 100);
             //^(?<id>\d+)(?:__[a-zA-Zа-яА-Я0-9\-\+_]+)?(?:\.(?<ext>[a-zA-Z0-9]+))?$ derpibooru name regex
 

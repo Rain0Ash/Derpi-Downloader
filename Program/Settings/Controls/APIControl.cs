@@ -5,7 +5,6 @@ using Common_Library.GUI.WinForms.Controls;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Derpi_Downloader.API;
-using Derpi_Downloader.RegKeys;
 using Derpi_Downloader.Settings;
 
 namespace System.Windows.Forms
@@ -48,9 +47,9 @@ namespace System.Windows.Forms
 
         private void ResetAPIButtonCheck()
         {
-            _resetAPIButton.Enabled = _apiTextBox.Text.Length > 0 || DerpiAPI.CheckAPI(Globals.APIKey);
+            _resetAPIButton.Enabled = _apiTextBox.Text.Length > 0 || Globals.APIKey.IsValid;
         }
-        
+
         private async void SaveAPIButton_Click(Object sender, EventArgs e)
         {
             if (!_apiTextBox.CheckValidFormat())
@@ -58,17 +57,17 @@ namespace System.Windows.Forms
                 return;
             }
 
-            if (_apiTextBox.Text != Globals.APIKey)
+            if (_apiTextBox.Text != Globals.APIKey.GetValue())
             {
                 String apiKey = _apiTextBox.Text;
 
-            
+
                 Boolean apiTextBoxCurrentEnabled = _apiTextBox.Enabled;
                 Boolean saveAPIButtonCurrentEnabled = _saveAPIButton.Enabled;
                 Boolean changeAPIButtonCurrentEnabled = _changeAPIButton.Enabled;
                 Boolean resetAPIButtonCurrentEnabled = _resetAPIButton.Enabled;
                 DisableButtons();
-            
+
                 void RestoreButtonsEnabledState()
                 {
                     _apiTextBox.Enabled = apiTextBoxCurrentEnabled;
@@ -76,18 +75,18 @@ namespace System.Windows.Forms
                     _changeAPIButton.Enabled = changeAPIButtonCurrentEnabled;
                     _resetAPIButton.Enabled = resetAPIButtonCurrentEnabled;
                 }
-                
+
                 if (!await DerpiAPI.CheckValidAPIAsync(apiKey).ConfigureAwait(true))
                 {
                     RestoreButtonsEnabledState();
                     ChangeAPI();
-                    new MessageForm(Globals.Localization.EnteredAPIKeyInvalid, Globals.Localization.APIKeyInvalid, Images.Basic.Error, Images.Basic.Error).ShowDialog();
+                    new MessageForm(Globals.Localization.EnteredAPIKeyInvalid, Globals.Localization.APIKeyInvalid, Images.Basic.Error, Images.Basic.Error)
+                        .ShowDialog();
                     return;
                 }
 
                 RestoreButtonsEnabledState();
-                Globals.APIKey = apiKey;
-                ConfigKeys.APIKey = apiKey;
+                Globals.APIKey.SetValue(apiKey);
             }
 
             _saveAPIButton.Enabled = false;
@@ -98,12 +97,12 @@ namespace System.Windows.Forms
         {
             ChangeAPI();
         }
-        
+
         private void ResetAPIButton_Click(Object sender, EventArgs e)
         {
             ResetAPI();
         }
-        
+
         public void ChangeAPI()
         {
             _apiTextBox.Enabled = true;
@@ -115,8 +114,7 @@ namespace System.Windows.Forms
 
         public void ResetAPI()
         {
-            ConfigKeys.APIKey = null;
-            Globals.APIKey = String.Empty;
+            Globals.APIKey.RemoveValue();
             _apiTextBox.Text = String.Empty;
             ChangeAPI();
         }

@@ -17,48 +17,48 @@ namespace Derpi_Downloader.API
         public const String SiteRegexPart = @"(((http(s)?:\/\/)|(www\.))?derpibooru\.org\/)";
         public const String SearchWordRegexPart = @"((\d+|search)\?q=)";
         public const String SearchSiteRegexPart = @"(" + SiteRegexPart + "?" + SearchWordRegexPart + ")?";
-        public const String SearchRegexPart = @"(((\w|\+|\%|\-|_)+:)?(\w|\*|\+|\%|\-|\ |_|\.|\(|\)|\\|\/|\@)+,?)+";
+        public const String SearchRegexPart = @"(((\w|\+|\%|\-|_)+:)?(\w|\*|\+|\%|\-|\ |_|\.|\(|\)|\\|\/|\@|\')+,?)+";
         public const String ParametersRegexPart = @"((&\w+=\w+)+)?";
-        
+
         public static Boolean CheckSearchRequest(String search)
         {
             try
             {
                 const String matchPattern = "^" + SearchSiteRegexPart + SearchRegexPart + ParametersRegexPart + "$";
-                
+
                 return StringUtils.IsBracketsWellFormed(search) && Regex.IsMatch(Uri.UnescapeDataString(search),
-                           matchPattern, RegexOptions.Compiled,
-                           new TimeSpan(0, 0, 3));
+                    matchPattern, RegexOptions.Compiled,
+                    new TimeSpan(0, 0, 3));
             }
             catch (RegexMatchTimeoutException)
             {
                 return false;
             }
         }
-        
+
         public static String CastSearchRequest(String search)
         {
             return CheckSearchRequest(search) ? Regex.Replace(search, @"(^.+(?=\/\w+\?q)\/|\w+\?q=|&.+$)", String.Empty, RegexOptions.IgnoreCase) : null;
         }
-        
+
         public static String CastSearchRequest(String search, Boolean escape)
         {
             search = CastSearchRequest(search);
-            
+
             if (String.IsNullOrEmpty(search))
             {
                 return null;
             }
-            
+
             return escape ? Uri.EscapeDataString(search) : search;
         }
-        
+
         private static readonly Dictionary<String, Object> ReplaceDictionary = new Dictionary<String, Object>
         {
             {"-dash-", "-"},
             {"%2B", "+"}
         };
-        
+
         public static String CastToDerpiSearch(String search)
         {
             return Uri.EscapeDataString(CastSearchRequest(search)?.Replace("%", String.Empty) ?? String.Empty).ReplaceFromDictionary(ReplaceDictionary);
@@ -69,30 +69,30 @@ namespace Derpi_Downloader.API
             search = CastToDerpiSearch(search);
             return String.IsNullOrEmpty(search) ? CastToAPIMyWatchedRequest(page, apiKey) : CastToAPISearch(search, page, apiKey);
         }
-        
+
         public static String CastToAPIMyWatchedRequest(Int32 page = 1, String apiKey = null)
         {
-            return $"{ProgramLocalization.DerpiBooruLink}/images/watched.json?key={apiKey ?? Globals.APIKey}&page={page}";
+            return $"{ProgramLocalization.DerpiBooruLink}/images/watched.json?key={apiKey ?? Globals.APIKey.GetValue()}&page={page}";
         }
 
         public static String CastToAPISearch(String search, Int32 page = 1, String apiKey = null)
         {
-            return $"{ProgramLocalization.DerpiBooruLink}/search.json?q={search}&key={apiKey ?? Globals.APIKey}&page={page}";
+            return $"{ProgramLocalization.DerpiBooruLink}/search.json?q={search}&key={apiKey ?? Globals.APIKey.GetValue()}&page={page}";
         }
-        
+
         public const Int32 LengthAPI = 20;
         private static readonly String PatternAPI = $@"^[a-zA-Z0-9]{{{LengthAPI}}}$";
 
         public static Boolean CheckAPI()
         {
-            return CheckAPI(Globals.APIKey);
+            return CheckAPI(Globals.APIKey.GetValue());
         }
-        
+
         public static Boolean CheckAPI(String api)
         {
             return !String.IsNullOrEmpty(api) && Regex.IsMatch(api, PatternAPI);
         }
-        
+
         public static async Task<Boolean> CheckValidAPIAsync(String apiKey)
         {
             return CheckAPI(apiKey) && await JsonAPI.GetJsonMyWatchedAsync(apiKey, 1, false).ConfigureAwait(true) != null;

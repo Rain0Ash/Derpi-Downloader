@@ -1,12 +1,10 @@
-﻿﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
-using System.Globalization;
 using System.Windows.Forms;
 using Common_Library.App;
 using Common_Library.GUI.WinForms.Forms;
-using Common_Library.Logger;
 using Derpi_Downloader.Forms;
 using Derpi_Downloader.Settings;
 
@@ -18,6 +16,7 @@ namespace Derpi_Downloader
         {
             App.Version = new AppVersion(Globals.Version);
         }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -36,13 +35,13 @@ namespace Derpi_Downloader
                 try
                 {
                     if (MessageForm.GetDialogResultOnException(exception,
-                            Globals.Localization.CriticalExceptionOccurredText,
-                            Globals.Localization.CriticalExceptionOccurred, MessageBoxButtons.RetryCancel,
-                            new[]
-                            {
-                                Globals.Localization.CriticalExceptionOccurredRestartButton,
-                                Globals.Localization.CriticalExceptionOccurredExitButton
-                            }) == DialogResult.Retry)
+                        Globals.Localization.CriticalExceptionOccurredText,
+                        Globals.Localization.CriticalExceptionOccurred, MessageBoxButtons.RetryCancel,
+                        new[]
+                        {
+                            Globals.Localization.CriticalExceptionOccurredRestartButton,
+                            Globals.Localization.CriticalExceptionOccurredExitButton
+                        }) == DialogResult.Retry)
                     {
                         Application.Restart();
                     }

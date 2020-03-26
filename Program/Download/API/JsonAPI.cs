@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common_Library;
-using Common_Library.Utils;
+using Common_Library.Utils.Network;
 using Derpi_Downloader.API;
 using Derpi_Downloader.Settings;
 using Newtonsoft.Json;
@@ -23,7 +23,8 @@ namespace Derpi_Downloader.Json
             return GetJsonAsync(DerpiAPI.CastToAPIMyWatchedRequest(page, apiKey), isInvoke, token);
         }
 
-        public static Task<String> GetJsonForSearchAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true, CancellationToken token = default)
+        public static Task<String> GetJsonForSearchAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true,
+            CancellationToken token = default)
         {
             return GetJsonAsync(DerpiAPI.CastToAPISearchRequest(search, page, apiKey), isInvoke, token);
         }
@@ -42,7 +43,7 @@ namespace Derpi_Downloader.Json
                     Encoding = Encoding.UTF8,
                     Proxy = Globals.WebProxy
                 };
-                
+
                 return await client.DownloadStringTaskAsync(apiRequest, token).ConfigureAwait(true);
             }
             catch (WebException ex)
@@ -60,7 +61,8 @@ namespace Derpi_Downloader.Json
             return null;
         }
 
-        public static async Task<DerpiImage> GetDerpiImageAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true, CancellationToken token = default)
+        public static async Task<DerpiImage> GetDerpiImageAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true,
+            CancellationToken token = default)
         {
             String json = await GetJsonForSearchAsync(search, page, apiKey, isInvoke, token).ConfigureAwait(true);
             return json == null ? null : JsonConvert.DeserializeObject<DerpiImage>(json);

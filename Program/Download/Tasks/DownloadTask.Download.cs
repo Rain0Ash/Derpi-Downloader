@@ -14,9 +14,10 @@ using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Localization;
 using Common_Library.Logger;
 using Common_Library.LongPath;
-using Common_Library.Utils;
+using Common_Library.Utils.IO;
+using Common_Library.Utils.Math;
+using Common_Library.Utils.Network;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Download
@@ -43,10 +44,11 @@ namespace Derpi_Downloader.Download
                 Initialized?.Invoke(Log);
             }
         }
-        
+
         private DerpiImage _firstPage;
 
         public delegate void SearchHandler(Search search);
+
         public event SearchHandler ImageDownloaded;
 
         public async Task InitializeTaskAsync()
@@ -56,14 +58,14 @@ namespace Derpi_Downloader.Download
                 Log.Add(new LogMessage(Globals.Localization.InitializedInvalidTaskError, MessageType.CriticalError));
                 return;
             }
-            
+
             if (IsInitialized || IsCompleted || _token.IsCancellationRequested)
             {
                 return;
             }
-            
+
             _firstPage = await GetPageAsync(1).ConfigureAwait(true);
-            
+
             if (_firstPage == null)
             {
                 IsInvalid = true;
@@ -80,7 +82,7 @@ namespace Derpi_Downloader.Download
                 IsCompleted = true;
                 return;
             }
-            
+
             if (_firstPageNumber > Pages)
             {
                 Log.Add(new LogMessage(Globals.Localization.NoImagesFound, MessageType.Warning));
@@ -90,12 +92,12 @@ namespace Derpi_Downloader.Download
 
             if (_countOfPages > 0)
             {
-                Pages = MathUtils.Range(Math.Min(Pages, _firstPageNumber + _countOfPages - 1), 0, Pages);
+                Pages = MathUtils.ToRange(Math.Min(Pages, _firstPageNumber + _countOfPages - 1), 0, Pages);
             }
 
-            Int32 lastPageImageCount = MaximumImages <= ImagesPerPage ? MaximumImages : MathUtils.Range(MaximumImages % ImagesPerPage, 1, ImagesPerPage, true);
-            
-            MaximumImages = MathUtils.Range((Pages - 1) * ImagesPerPage + lastPageImageCount, 0, MaximumImages);
+            Int32 lastPageImageCount = MaximumImages <= ImagesPerPage ? MaximumImages : MathUtils.ToRange(MaximumImages % ImagesPerPage, 1, ImagesPerPage, true);
+
+            MaximumImages = MathUtils.ToRange((Pages - 1) * ImagesPerPage + lastPageImageCount, 0, MaximumImages);
 
             if (MaximumImages <= 0 || Pages <= 0)
             {
@@ -110,22 +112,22 @@ namespace Derpi_Downloader.Download
                 IsInvalid = true;
                 return;
             }
-            
+
             IsInitialized = true;
         }
-        
+
         private async Task GenerateTasksAsync()
         {
             Task[] tasks = new Task[ImagesPerPage];
             DerpiImage nextPage = new DerpiImage();
-            
+
             for (Int32 page = _firstPageNumber; page <= Pages; page++)
             {
                 if (page == _firstPageNumber)
                 {
                     await Task.Delay(2000, _token).ConfigureAwait(true);
                 }
-                
+
                 await WaitAsync(_token).ConfigureAwait(true);
 
                 Task<DerpiImage> nextPageTask = null;
@@ -134,7 +136,7 @@ namespace Derpi_Downloader.Download
                 {
                     return;
                 }
-                
+
                 if (page < Pages)
                 {
                     nextPageTask = GetPageAsync(page + 1);
@@ -148,7 +150,7 @@ namespace Derpi_Downloader.Download
                     {
                         nextPage = await nextPageTask.ConfigureAwait(true);
                     }
-                    
+
                     continue;
                 }
 
@@ -160,10 +162,11 @@ namespace Derpi_Downloader.Download
                     }
 
                     Search search = derpiPage.search[index];
-                    
+
                     while (search?.duplicate_of != null)
                     {
-                        Log.Add(new LogMessage("Image id:{0} duplicate of id:{1}", MessageType.Warning, new []{search.id.ToString(), search.duplicate_of.ToString()}));
+                        Log.Add(new LogMessage("Image id:{0} duplicate of id:{1}", MessageType.Warning,
+                            new[] {search.id.ToString(), search.duplicate_of.ToString()}));
                         try
                         {
                             search = (await JsonAPI.GetDerpiImageAsync($"id:{search.duplicate_of}", token: _token).ConfigureAwait(true)).search[0];
@@ -178,7 +181,7 @@ namespace Derpi_Downloader.Download
                     {
                         continue;
                     }
-                    
+
                     tasks[index] = DownloadImageAsync(search);
                 }
 
@@ -216,7 +219,7 @@ namespace Derpi_Downloader.Download
                     }
 
                     await WaitAsync(token).ConfigureAwait(true);
-                    
+
                     token.ThrowIfCancellationRequested();
 
                     Task<DerpiImage> pageTask = JsonAPI.GetDerpiImageAsync(SearchQuery, page, token: token);
@@ -226,7 +229,7 @@ namespace Derpi_Downloader.Download
                         if (await Task.WhenAny(pageTask, Task.Delay(waitDelay, token)).ConfigureAwait(true) == pageTask)
                         {
                             DerpiImage derpiImage = await pageTask.ConfigureAwait(true);
-                                
+
                             try
                             {
                                 pageTask.Dispose();
@@ -244,9 +247,9 @@ namespace Derpi_Downloader.Download
                         //ignored
                     }
 
-                    Log.Add(new LogMessage(Globals.Localization.PageWaitToLongRetry, MessageType.Warning, new []{page.ToString()}));
+                    Log.Add(new LogMessage(Globals.Localization.PageWaitToLongRetry, MessageType.Warning, new[] {page.ToString()}));
                     source.Cancel();
-                    
+
                     try
                     {
                         pageTask.Dispose();
@@ -255,12 +258,11 @@ namespace Derpi_Downloader.Download
                     {
                         //ignored
                     }
-                    
-                    count++;
 
+                    count++;
                 } while (count < maximumCounts);
 
-                Log.Add(new LogMessage(Globals.Localization.GetPageError, MessageType.CriticalWarning, new []{page.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.GetPageError, MessageType.CriticalWarning, new[] {page.ToString()}));
                 return null;
             }
             catch (OperationCanceledException)
@@ -268,7 +270,7 @@ namespace Derpi_Downloader.Download
                 return null;
             }
         }
-        
+
         private async Task<Byte[]> GetImageAsync(Search search)
         {
             try
@@ -367,7 +369,6 @@ namespace Derpi_Downloader.Download
 
                     source.Cancel();
                     count++;
-
                 } while (count < maximumCounts);
 
                 Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {search.id.ToString()}));
@@ -379,7 +380,7 @@ namespace Derpi_Downloader.Download
             }
             catch (Exception)
             {
-                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new []{search.id.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {search.id.ToString()}));
                 return null;
             }
         }
@@ -392,25 +393,24 @@ namespace Derpi_Downloader.Download
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static Boolean CheckImageHash(Byte[] image, String imageHash, String originalImageHash, out String hash)
         {
-            #if HashImage
-            
+#if HashImage
             hash = Cryptography.Hash.Sha512String(image);
             return hash.Equals(imageHash, StringComparison.OrdinalIgnoreCase) ||
                    hash.Equals(originalImageHash, StringComparison.OrdinalIgnoreCase);
-            
-            #else
+
+#else
 
             hash = String.Empty;
             return true;
-            
-            #endif
+
+#endif
         }
 
         private String GetFormatedFilePath(Search search)
         {
             return FormatedField.Format(search, _savePath);
         }
-        
+
         private String GetFormatedDirectoryPath(Search search)
         {
             return FormatedField.Format(search, _saveDirectory);
@@ -424,14 +424,14 @@ namespace Derpi_Downloader.Download
                 {
                     return;
                 }
-                
+
                 await WaitAsync(_token).ConfigureAwait(true);
-                
+
                 String formatedSavePath = null;
                 if (SaveToDisk)
                 {
                     formatedSavePath = GetFormatedFilePath(search);
-                    
+
                     if (String.IsNullOrEmpty(formatedSavePath))
                     {
                         Log.Add(new LogMessage(Globals.Localization.FormatFileNameError,
@@ -440,8 +440,8 @@ namespace Derpi_Downloader.Download
                         ImageSaved?.Invoke(search);
                         return;
                     }
-                    
-                    if (File.Exists(formatedSavePath) && !Globals.ExistFileRewrite)
+
+                    if (File.Exists(formatedSavePath) && !Globals.ExistFileRewrite.GetValue())
                     {
                         ImageDownloaded?.Invoke(search);
                         ImageSaved?.Invoke(search);
@@ -455,9 +455,9 @@ namespace Derpi_Downloader.Download
                 {
                     return;
                 }
-                
+
                 ImageDownloaded?.Invoke(search);
-                
+
                 if (SaveToDisk)
                 {
                     try
@@ -468,7 +468,7 @@ namespace Derpi_Downloader.Download
                     {
                         Log.Add(new LogMessage(e.Message, MessageType.CriticalWarning));
                         IsInvalid = true;
-                        MessageForm.GetDialogResultOnException(e, null, null, MessageBoxButtons.OK, new []{Globals.Localization.Accept});
+                        MessageForm.GetDialogResultOnException(e, null, null, MessageBoxButtons.OK, new[] {Globals.Localization.Accept});
                     }
                 }
             }

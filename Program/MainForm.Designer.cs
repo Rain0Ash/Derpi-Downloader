@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -13,9 +13,9 @@ using Derpi_Downloader.Settings;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.API;
 using Common_Library.Images;
- using Derpi_Downloader.Resources;
+using Derpi_Downloader.Resources;
 
- namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.Forms
 {
     public partial class MainForm
     {
@@ -23,7 +23,7 @@ using Common_Library.Images;
         /// Required designer variable.
         /// </summary>
         private readonly System.ComponentModel.IContainer components = null;
-        
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -44,7 +44,7 @@ using Common_Library.Images;
         {
             _queueRequestListBox.ListBox.Add(request);
         }
-        
+
         public void RemoveRequest(Object request)
         {
             _queueRequestListBox.ListBox.Remove(request);
@@ -54,7 +54,7 @@ using Common_Library.Images;
         {
             return _queueRequestListBox.ListBox.Items.OfType<Object>();
         }
-        
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -73,8 +73,9 @@ using Common_Library.Images;
             _helpToolTip = new HelpToolTip();
             _pageControl = new PageControl<Control>();
             SuspendLayout();
-            
-            _pageControl.Size = new Size(LayoutGUI.DownloadControlSizeWidth, LayoutGUI.MainFormSizeHeight - LayoutGUI.ButtonSizeHeight - LayoutGUI.DistanceBetweenControls);
+
+            _pageControl.Size = new Size(LayoutGUI.DownloadControlSizeWidth,
+                LayoutGUI.MainFormSizeHeight - LayoutGUI.ButtonSizeHeight - LayoutGUI.DistanceBetweenControls);
             _pageControl.Location = new Point(0, LayoutGUI.ButtonSizeHeight + 1);
             _pageControl.Font = new Font(Font.Name, Font.Size + 2);
             _pageControl.Position = TabAlignment.Bottom;
@@ -99,24 +100,22 @@ using Common_Library.Images;
             _taskCreatorButton.Size = new Size(LayoutGUI.ButtonSizeWidth, LayoutGUI.ButtonSizeHeight);
             _taskCreatorButton.Image = new Bitmap(Images.Lineal.Plus, new Size(LayoutGUI.ButtonSizeWidth / 2, LayoutGUI.ButtonSizeHeight / 2));
             _taskCreatorButton.UseVisualStyleBackColor = true;
-            _taskCreatorButton.Enabled = DerpiAPI.CheckAPI(Globals.APIKey);
+            _taskCreatorButton.Enabled = Globals.APIKey.IsValid;
             _taskCreatorButton.Click += (sender, args) =>
             {
-                if (_downloadControl.CurrentTasks < DownloadControl.MaximumTasks && (ModifierKeys == Keys.Control || ModifierKeys == (Keys.Shift | Keys.Control)))
+                if (_downloadControl.CurrentTasks < DownloadControl.MaximumTasks &&
+                    (ModifierKeys == Keys.Control || ModifierKeys == (Keys.Shift | Keys.Control)))
                 {
                     _downloadControl.AddDownloadTaskControl();
                     return;
                 }
-                
+
                 OpenTaskCreatorForm();
             };
-            Globals.APIKeyChanged += () =>
+            Globals.APIKey.Changed += () => { _taskCreatorButton.Enabled = Globals.APIKey.IsValid; };
+            Globals.APIKey.Changed += () =>
             {
-                _taskCreatorButton.Enabled = DerpiAPI.CheckAPI(Globals.APIKey);
-            };
-            Globals.APIKeyChanged += () =>
-            {
-                if (DerpiAPI.CheckAPI(Globals.APIKey) && _downloadControl.CurrentTasks <= 0)
+                if (Globals.APIKey.IsValid && _downloadControl.CurrentTasks <= 0)
                 {
                     _downloadControl.AddDownloadTaskControl();
                 }
@@ -128,10 +127,7 @@ using Common_Library.Images;
             _settingsButton.Location = new Point(LayoutGUI.MainFormSizeWidth - _settingsButton.Size.Width, 0);
             _settingsButton.Image = new Bitmap(Images.Line.Settings, new Size(LayoutGUI.ButtonSizeWidth / 2, LayoutGUI.ButtonSizeHeight / 2));
             _settingsButton.UseVisualStyleBackColor = true;
-            _settingsButton.Click += (sender, args) =>
-            {
-                _settingsForm.ShowDialog();
-            };
+            _settingsButton.Click += (sender, args) => { _settingsForm.ShowDialog(); };
             //
             // additionalsButton
             //
@@ -139,37 +135,34 @@ using Common_Library.Images;
             _additionalsButton.Location = new Point(LayoutGUI.MainFormSizeWidth - _settingsButton.Size.Width - _additionalsButton.Size.Width, 0);
             _additionalsButton.Image = new Bitmap(Images.Line.Tech, new Size(LayoutGUI.ButtonSizeWidth / 2, LayoutGUI.ButtonSizeHeight / 2));
             _additionalsButton.UseVisualStyleBackColor = true;
-            _additionalsButton.Click += (sender, args) =>
-            {
-                _additionalsForm.ShowDialog();
-            };
+            _additionalsButton.Click += (sender, args) => { _additionalsForm.ShowDialog(); };
             // 
             // aboutButton
             // 
             _aboutButton.Size = new Size(LayoutGUI.ButtonSizeWidth, LayoutGUI.ButtonSizeHeight);
-            _aboutButton.Location = new Point(LayoutGUI.MainFormSizeWidth - _settingsButton.Size.Width - _additionalsButton.Size.Width - _aboutButton.Size.Width, 0);
+            _aboutButton.Location =
+                new Point(LayoutGUI.MainFormSizeWidth - _settingsButton.Size.Width - _additionalsButton.Size.Width - _aboutButton.Size.Width, 0);
             _aboutButton.UseVisualStyleBackColor = true;
             _aboutButton.Image = new Bitmap(Images.Basic.Question, new Size(LayoutGUI.ButtonSizeWidth / 2, LayoutGUI.ButtonSizeHeight / 2));
             _aboutButton.Click += (sender, args) =>
             {
                 new MessageForm(ModifierKeys == Keys.Shift ? Globals.Localization.FirstKnowText : Globals.Localization.AboutProgramText,
-                    Globals.Localization.AboutProgramTitle, Images.Basic.Information, Resource.icon.ToBitmap(), MessageBoxButtons.OK, new []{Globals.Localization.Close}).ShowDialog();
+                    Globals.Localization.AboutProgramTitle, Images.Basic.Information, Resource.icon.ToBitmap(), MessageBoxButtons.OK,
+                    new[] {Globals.Localization.Close}).ShowDialog();
             };
 
             _logRichTextBox.Size = new Size(LayoutGUI.MainFormLoggerRichTextBoxSizeWidth - 2, LayoutGUI.MainFormLoggerRichTextBoxSizeHeight);
-            _logRichTextBox.Location = new Point(LayoutGUI.MainFormSizeWidth - _logRichTextBox.Size.Width - LayoutGUI.QueueRequestListBoxWidth, LayoutGUI.MainFormSizeHeight - _logRichTextBox.Size.Height - _pageControl.ButtonHeight - LayoutGUI.DistanceBetweenControls + 1);
+            _logRichTextBox.Location = new Point(LayoutGUI.MainFormSizeWidth - _logRichTextBox.Size.Width - LayoutGUI.QueueRequestListBoxWidth,
+                LayoutGUI.MainFormSizeHeight - _logRichTextBox.Size.Height - _pageControl.ButtonHeight - LayoutGUI.DistanceBetweenControls + 1);
             _logRichTextBox.BorderStyle = BorderStyle.None;
             _logRichTextBox.ScrollBars = RichTextBoxScrollBars.None;
             _logRichTextBox.Reversed = false;
             _logRichTextBox.BorderStyle = BorderStyle.Fixed3D;
             Globals.Logger.Logged += _logRichTextBox.Log;
-            
+
             _queueRequestListBox.Size = new Size(LayoutGUI.QueueRequestListBoxWidth, _logRichTextBox.Size.Height);
             _queueRequestListBox.Location = new Point(_logRichTextBox.Location.X + _logRichTextBox.Size.Width, _logRichTextBox.Location.Y);
-            _queueRequestListBox.AddButton.Click += (sender, args) =>
-            {
-                OpenTaskCreatorForm();
-            };
+            _queueRequestListBox.AddButton.Click += (sender, args) => { OpenTaskCreatorForm(); };
             _queueRequestListBox.ListBox.ItemAdded += (obj, index) =>
             {
                 if (obj is DownloadRequest request)
@@ -195,7 +188,7 @@ using Common_Library.Images;
             Controls.Add(_pageControl);
             Icon = Resource.icon;
             Shown += OnForm_Shown;
-            Globals.APIKeyChanged += OnAPIKeyChanged;
+            Globals.APIKey.Changed += OnAPIKeyChanged;
             OnAPIKeyChanged();
             JsonAPI.OnExceptionResponce += code =>
             {
@@ -203,12 +196,14 @@ using Common_Library.Images;
                 {
                     case HttpStatusCode.Forbidden:
                     case HttpStatusCode.Unauthorized:
-                        new MessageForm(Globals.Localization.CurrentAPIKeyInvalid, Globals.Localization.APIKeyInvalid, Images.Basic.Error, Images.Basic.Error).ShowDialog();
+                        new MessageForm(Globals.Localization.CurrentAPIKeyInvalid, Globals.Localization.APIKeyInvalid, Images.Basic.Error, Images.Basic.Error)
+                            .ShowDialog();
                         _settingsForm.ResetAPI();
                         _settingsForm.ShowDialog();
                         break;
                     default:
-                        new MessageForm($"{Globals.Localization.UnknownError}: {code}", Globals.Localization.UnknownError, Images.Basic.Error, Images.Basic.Error).ShowDialog();
+                        new MessageForm($"{Globals.Localization.UnknownError}: {code}", Globals.Localization.UnknownError, Images.Basic.Error,
+                            Images.Basic.Error).ShowDialog();
                         break;
                 }
             };
@@ -216,7 +211,7 @@ using Common_Library.Images;
         }
 
         #endregion
-        
+
         private Button _aboutButton;
         private Button _taskCreatorButton;
         private Button _settingsButton;

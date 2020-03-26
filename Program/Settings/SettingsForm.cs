@@ -8,8 +8,7 @@ using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Common_Library.Localization;
 using Common_Library.LongPath;
-using Common_Library.Utils;
-using Derpi_Downloader.RegKeys;
+using Common_Library.Utils.IO;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Forms
@@ -56,7 +55,8 @@ namespace Derpi_Downloader.Forms
 
         private void OnCurrentPathChanged()
         {
-            _pathLabel.Text = $@"{Globals.Localization.CurrentPathLabel} {Path.Combine(Globals.CurrentDownloadFolder ?? String.Empty, Globals.CurrentDownloadFileName ?? String.Empty)}";
+            _pathLabel.Text =
+                $@"{Globals.Localization.CurrentPathLabel} {Path.Combine(Globals.CurrentDownloadFolder.GetValue() ?? String.Empty, Globals.CurrentDownloadFileName.GetValue() ?? String.Empty)}";
         }
 
         private void OnDownloadPath_TextChanged_PathCheck()
@@ -67,9 +67,9 @@ namespace Derpi_Downloader.Forms
                 return;
             }
 
-            Globals.CurrentDownloadFolder = trimedText;
+            Globals.CurrentDownloadFolder.SetValue(trimedText);
         }
-        
+
         private void OnDownloadName_TextChanged_PathCheck()
         {
             String trimedText = PathUtils.TrimPath(_downloadNameTextBox.Text);
@@ -78,9 +78,9 @@ namespace Derpi_Downloader.Forms
                 return;
             }
 
-            Globals.CurrentDownloadFileName = trimedText;
+            Globals.CurrentDownloadFileName.SetValue(trimedText);
         }
-        
+
         private void OnLostFocusPathCheck()
         {
             String trimedText = PathUtils.TrimPathEnd(_downloadPathTextBox.Text);
@@ -89,10 +89,10 @@ namespace Derpi_Downloader.Forms
                 _downloadPathTextBox.Text = trimedText;
                 return;
             }
-            
-            _downloadPathTextBox.Text = String.IsNullOrEmpty(Globals.CurrentDownloadFolder) ? Globals.DefaultDownloadFolder : Globals.CurrentDownloadFolder;
+
+            _downloadPathTextBox.Text = String.IsNullOrEmpty(Globals.CurrentDownloadFolder.GetValue()) ? Globals.DefaultDownloadFolder : Globals.CurrentDownloadFolder.GetValue();
         }
-        
+
         private void OnLostFocusNameCheck()
         {
             String trimedText = PathUtils.TrimPath(_downloadNameTextBox.Text);
@@ -101,35 +101,36 @@ namespace Derpi_Downloader.Forms
                 _downloadNameTextBox.Text = trimedText;
                 return;
             }
-            
-            _downloadNameTextBox.Text = String.IsNullOrEmpty(Globals.CurrentDownloadFileName) ? Globals.DefaultDownloadFileName : Globals.CurrentDownloadFileName;
+
+            _downloadNameTextBox.Text =
+                String.IsNullOrEmpty(Globals.CurrentDownloadFileName.GetValue()) ? Globals.DefaultDownloadFileName : Globals.CurrentDownloadFileName.GetValue();
         }
 
         private void OnExistFileRewriteCheckBoxCheckBoxClick(Object sender, EventArgs e)
         {
-            Globals.ExistFileRewrite = _existFileRewriteCheckBox.Checked;
+            Globals.ExistFileRewrite.SetValue(_existFileRewriteCheckBox.Checked);
         }
-        
+
         private void OnQueueAutoDownloadCheckBoxCheckBoxClick(Object sender, EventArgs e)
         {
-            Globals.QueueAutoDownload = _queueAutoDownloadCheckBox.Checked;
+            Globals.QueueAutoDownload.SetValue(_queueAutoDownloadCheckBox.Checked);
         }
-        
+
         private void OnConvertSVGToPngCheckBoxCheckBoxClick(Object sender, EventArgs e)
         {
-            Globals.ConvertSVGToPNG = _convertSVGToPNGCheckBox.Checked;
+            Globals.ConvertSVGToPNG.SetValue(_convertSVGToPNGCheckBox.Checked);
         }
 
         private void OnResetSettingsButtonClick(out DialogResult dialogResult)
         {
             dialogResult = new MessageForm(Globals.Localization.SettingsResetYouSureQuestion,
-                Globals.Localization.YouSureQuestion,
-                Images.Basic.Warning,
-                Images.Basic.Warning,
-                MessageBoxButtons.YesNo,
-                new []{Globals.Localization.Yes, Globals.Localization.No})
+                    Globals.Localization.YouSureQuestion,
+                    Images.Basic.Warning,
+                    Images.Basic.Warning,
+                    MessageBoxButtons.YesNo,
+                    new[] {Globals.Localization.Yes, Globals.Localization.No})
                 .ShowDialog();
-            
+
             if (dialogResult != DialogResult.Yes)
             {
                 return;
@@ -139,7 +140,7 @@ namespace Derpi_Downloader.Forms
             _downloadNameTextBox.Text = Globals.DefaultDownloadFileName;
             LocalizationBase.UpdateLocalization(LocalizationBase.CurrentCulture.LCID);
         }
-        
+
         private void OnResetAllSettingsButtonClick()
         {
             OnResetSettingsButtonClick(out DialogResult dialogResult);
@@ -147,26 +148,27 @@ namespace Derpi_Downloader.Forms
             {
                 return;
             }
-            
+
             _languageImagedComboBox.SelectedIndex = 0;
             _proxyForm.ResetProxy();
             _apiControl.ResetAPI();
         }
-        
+
         private void OnSaveSettingsButton_Click()
         {
-            ConfigKeys.CurrentDownloadFolder = _downloadPathTextBox.Text;
-            ConfigKeys.CurrentDownloadFileName = _downloadNameTextBox.Text;
-            ConfigKeys.LanguageCode = _languageImagedComboBox.GetLanguageLCID();
-            ConfigKeys.ExistFileRewrite = _existFileRewriteCheckBox.Checked;
-            ConfigKeys.QueueAutoDownload = _queueAutoDownloadCheckBox.Checked;
-            ConfigKeys.ConvertSVGToPNG = _convertSVGToPNGCheckBox.Checked;
+            Globals.CurrentDownloadFolder.SetValue(_downloadPathTextBox.Text);
+            Globals.CurrentDownloadFileName.SetValue(_downloadNameTextBox.Text);
+            Globals.LanguageCode.SetValue(_languageImagedComboBox.GetLanguageLCID());
+            Globals.ExistFileRewrite.SetValue(_existFileRewriteCheckBox.Checked);
+            Globals.QueueAutoDownload.SetValue(_queueAutoDownloadCheckBox.Checked);
+            Globals.ConvertSVGToPNG.SetValue(_convertSVGToPNGCheckBox.Checked);
+            Globals.Config.SaveProperties();
             Close();
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _apiControl.Text = Globals.APIKey;
+            _apiControl.Text = Globals.APIKey.GetValue();
             base.OnClosing(e);
         }
     }

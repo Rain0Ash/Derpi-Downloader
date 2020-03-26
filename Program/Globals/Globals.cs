@@ -2,172 +2,109 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
-using System.ComponentModel;
 using System.Net;
+using System.Reflection;
+using System.Windows.Forms;
 using Common_Library;
+using Common_Library.Config;
+using Common_Library.Crypto;
+using Common_Library.Localization;
 using Common_Library.Logger;
-using Common_Library.Utils;
+using Common_Library.LongPath;
+using Common_Library.Utils.IO;
+using Common_Library.Utils.Network;
+using Derpi_Downloader.API;
 using Derpi_Downloader.Localization;
-using Derpi_Downloader.RegKeys;
-using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.Settings
 {
     public static class Globals
     {
-        public const String Version = "1.2";
+        public const String Version = "1.3";
         public const String DefaultDownloadFolder = @"Download";
         public const String DefaultDownloadFileName = @"{artist?}\{name}.{ext}";
-        
+
         public static readonly ProgramLocalization Localization;
         public static readonly Logger Logger;
 
+        public static readonly Config Config;
+        private const String SettingsSection = "Settings";
+        private const String CurrentDownloadFolderKey = "Default download folder";
+        private const String CurrentDownloadFileNameKey = "Default download file name";
+        private const String LanguageCodeKey = "Language code";
+        private const String APISection = "API";
+        private const String APICodeKey = "API";
+        private const String OptionsSection = "Options";
+        private const String ExistFileRewriteKey = "Exist file rewrite";
+        private const String ConvertSVGToPNGKey = "SVG to PNG";
+        private const String QueueAutoDownloadKey = "Queue auto download";
+        private const String ProxySection = "Proxy";
+        private const String ProxyAddressKey = "Proxy address";
+        private const String ProxyPortKey = "Proxy port";
+        private const String ProxyLoginKey = "Proxy login";
+        private const String ProxyPasswordKey = "Proxy password";
+        
         static Globals()
         {
-            Localization = new ProgramLocalization(ConfigKeys.LanguageCode);
+            Config = Config.Factory(Assembly.GetCallingAssembly().GetName().Name, false);
+            
+            CurrentDownloadFolder = Config.GetProperty(CurrentDownloadFolderKey, DefaultDownloadFolder, 
+                path => PathUtils.IsValidPath(path, PathType.All), CryptAction.Crypt, SettingsSection);
+            
+            CurrentDownloadFileName = Config.GetProperty(CurrentDownloadFileNameKey, DefaultDownloadFileName, 
+                path => PathUtils.IsValidPath(path, PathType.LocalFile), CryptAction.Crypt, SettingsSection);
+
+            LanguageCode = Config.GetProperty(LanguageCodeKey, LocalizationBase.BasicCulture.LCID, SettingsSection);
+            
+            APIKey = Config.GetProperty(APICodeKey, String.Empty, DerpiAPI.CheckAPI, CryptAction.Crypt, null, false, APISection);
+
+            ExistFileRewrite = Config.GetProperty(ExistFileRewriteKey, false, OptionsSection);
+            
+            ConvertSVGToPNG = Config.GetProperty(ConvertSVGToPNGKey, true, OptionsSection);
+            
+            QueueAutoDownload = Config.GetProperty(QueueAutoDownloadKey, false, OptionsSection);
+
+            ProxyAddress = Config.GetProperty(ProxyAddressKey, @"127.0.0.1", NetworkUtils.ValidateIPv4, ProxySection);
+            
+            ProxyPort = Config.GetProperty(ProxyPortKey, 3128, NetworkUtils.ValidatePort, ProxySection);
+
+            ProxyLogin = Config.GetProperty(ProxyLoginKey, String.Empty, null, CryptAction.Crypt, ProxySection);
+            
+            ProxyPassword = Config.GetProperty(ProxyPasswordKey, String.Empty, null, CryptAction.Crypt, ProxySection);
+
+            Localization = new ProgramLocalization(LanguageCode.GetValue());
             Logger = new Logger();
-            APIKey = ConfigKeys.APIKey;
-            CurrentDownloadFolder = ConfigKeys.CurrentDownloadFolder;
-            CurrentDownloadFileName = ConfigKeys.CurrentDownloadFileName;
-            ExistFileRewrite = ConfigKeys.ExistFileRewrite;
-            ConvertSVGToPNG = ConfigKeys.ConvertSVGToPNG;
-            QueueAutoDownload = ConfigKeys.QueueAutoDownload;
             
             WebProxy = null;
-            WebProxyAddress = ConfigKeys.ProxyAddress;
-            WebProxyPort = ConfigKeys.ProxyPort;
-            WebProxyLogin = ConfigKeys.ProxyLogin;
-            WebProxyPassword = ConfigKeys.ProxyPassword;
-
-            if (NetworkUtils.ValidateIPv4(WebProxyAddress) && WebProxyAddress != NetworkUtils.LocalhostIP && NetworkUtils.CheckPort(WebProxyPort))
+            
+            if (ProxyAddress.IsValid && ProxyAddress.Value != NetworkUtils.LocalhostIP && ProxyPort.IsValid)
             {
-                WebProxy = ProxyUtils.CreateProxy(WebProxyAddress, WebProxyPort, WebProxyLogin, WebProxyPassword);
-            }
-        }
-
-        public static event Handlers.EmptyHandler CurrentDownloadFolderChanged;
-        public static event Handlers.EmptyHandler CurrentDownloadFileNameChanged;
-        public static event Handlers.EmptyHandler APIKeyChanged;
-        public static event Handlers.EmptyHandler ExistFileRewriteChanged;
-        public static event Handlers.EmptyHandler ConvertSVGToPNGChanged;
-        public static event Handlers.EmptyHandler QueueAutoDownloadChanged;
-        public static event Handlers.EmptyHandler ProxyChanged;
-        public static String APIKey
-        {
-            get
-            {
-                return apiKey;
-            }
-            set
-            {
-                if (apiKey == value)
-                {
-                    return;
-                }
-
-                apiKey = value;
-                APIKeyChanged?.Invoke();
-            }
-        }
-
-        public static String CurrentDownloadFolder
-        {
-            get
-            {
-                return currentDownloadFolder;
-            }
-            set
-            {
-                if (currentDownloadFolder == value)
-                {
-                    return;
-                }
-
-                currentDownloadFolder = value;
-                CurrentDownloadFolderChanged?.Invoke();
+                WebProxy = ProxyUtils.CreateProxy(ProxyAddress.Value, ProxyPort.Value, ProxyLogin.Value, ProxyPassword.Value);
             }
         }
         
-        public static String CurrentDownloadFileName
-        {
-            get
-            {
-                return currentDownloadFileName;
-            }
-            set
-            {
-                if (currentDownloadFileName == value)
-                {
-                    return;
-                }
-
-                currentDownloadFileName = value;
-                CurrentDownloadFileNameChanged?.Invoke();
-            }
-        }
+        public static readonly IConfigProperty<String> CurrentDownloadFolder;
+        public static readonly IConfigProperty<String> CurrentDownloadFileName;
+        public static readonly IConfigProperty<Int32> LanguageCode;
+        public static readonly IConfigProperty<String> APIKey;
+        public static readonly IConfigProperty<Boolean> ExistFileRewrite;
+        public static readonly IConfigProperty<Boolean> ConvertSVGToPNG;
+        public static readonly IConfigProperty<Boolean> QueueAutoDownload;
+        public static readonly IConfigProperty<String> ProxyAddress;
+        public static readonly IConfigProperty<Int32> ProxyPort;
+        public static readonly IConfigProperty<String> ProxyLogin;
+        public static readonly IConfigProperty<String> ProxyPassword;
+        
+        public static event Handlers.EmptyHandler ProxyChanged;
 
         public static String CurrentDownloadPath
         {
             get
             {
-                return Path.Combine(CurrentDownloadFolder, CurrentDownloadFileName);
-            }
-        }
-
-        public static Boolean ExistFileRewrite
-        {
-            get
-            {
-                return existFileRewrite;
-            }
-            set
-            {
-                if (existFileRewrite == value)
-                {
-                    return;
-                }
-                
-                existFileRewrite = value;
-                ExistFileRewriteChanged?.Invoke();
+                return Path.Combine(CurrentDownloadFolder.Value, CurrentDownloadFileName.Value);
             }
         }
         
-        public static Boolean ConvertSVGToPNG
-        {
-            get
-            {
-                return convertSVGToPNG;
-            }
-            set
-            {
-                if (convertSVGToPNG == value)
-                {
-                    return;
-                }
-                
-                convertSVGToPNG = value;
-                ConvertSVGToPNGChanged?.Invoke();
-            }
-        }
-
-        public static Boolean QueueAutoDownload
-        {
-            get
-            {
-                return queueAutoDownload;
-            }
-            set
-            {
-                if (queueAutoDownload == value)
-                {
-                    return;
-                }
-
-                queueAutoDownload = value;
-                QueueAutoDownloadChanged?.Invoke();
-            }
-        }
-
         public static WebProxy WebProxy
         {
             get
@@ -185,18 +122,7 @@ namespace Derpi_Downloader.Settings
                 ProxyChanged?.Invoke();
             }
         }
-
-        public static String WebProxyAddress { get; set; }
-        public static Int32 WebProxyPort { get; set; }
-        public static String WebProxyLogin { get; set; }
-        public static String WebProxyPassword { get; set; }
         
-        private static String apiKey;
-        private static String currentDownloadFolder;
-        private static String currentDownloadFileName;
-        private static Boolean existFileRewrite;
-        private static Boolean convertSVGToPNG;
-        private static Boolean queueAutoDownload;
         private static WebProxy webProxy;
     }
 }

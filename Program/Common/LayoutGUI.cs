@@ -18,6 +18,5 @@ namespace Derpi_Downloader.Settings
         public const Int32 DownloadTaskControlHeight = 130;
         public const Int32 DownloadControlSizeWidth = DownloadTaskControlWidth * 2;
         public const Int32 QueueRequestListBoxWidth = 160;
-        
     }
 }

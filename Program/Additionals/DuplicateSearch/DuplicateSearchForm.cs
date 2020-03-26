@@ -6,6 +6,7 @@ using Common_Library.GUI.WinForms.Forms;
 using Common_Library.LongPath;
 using Common_Library.Types.Other;
 using Common_Library.Utils;
+using Common_Library.Utils.IO;
 
 namespace Derpi_Downloader.Additionals.DuplicateSearch
 {
@@ -26,7 +27,7 @@ namespace Derpi_Downloader.Additionals.DuplicateSearch
             PathObject pathObject = new PathObject(path, PathType.Folder, PathStatus.Exist);
             _pathListBox.Add(pathObject);
         }
-        
+
         protected override void UpdateText()
         {
             Text = Globals.Localization.DuplicateSearchButtonToolTip;

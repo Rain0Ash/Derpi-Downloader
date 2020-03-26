@@ -6,15 +6,14 @@ using System.Drawing;
 using Common_Library.GUI.WinForms.Labels;
 using Common_Library.GUI.WinForms.RichTextBoxes;
 using Common_Library.GUI.WinForms.ToolTips;
+using Common_Library.Utils.IO;
+using Common_Library.Utils.Math;
 using Derpi_Downloader.Settings;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.Localization;
 using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.Forms
 {
-    using Common_Library.Utils;
-
     public partial class DownloadTaskControl
     {
         private void InitializeComponent()
@@ -31,7 +30,7 @@ namespace Derpi_Downloader.Forms
             _downloadValueLabel = new CurrentMaxValueLabel();
             _helpToolTip = new HelpToolTip();
             SuspendLayout();
-            
+
             _searchQueryLabel.Location = new Point(2, -3);
             _searchQueryLabel.Size = new Size(200, 20);
             _searchQueryLabel.AutoSize = false;
@@ -41,7 +40,7 @@ namespace Derpi_Downloader.Forms
             _downloadPathLabel.Size = new Size(200, 20);
             _downloadPathLabel.AutoSize = false;
             _downloadPathLabel.TextAlign = ContentAlignment.MiddleLeft;
-            
+
             _searchQueryTextBox.Location = new Point(5, 18);
             _searchQueryTextBox.Size = new Size(330, 22);
             _searchQueryTextBox.Multiline = false;
@@ -56,7 +55,7 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Search));
             _downloadPathTextBox.TextChanged += (sender, args) => OnTextChanged();
             _downloadPathTextBox.Text = Globals.CurrentDownloadPath;
-            _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = Path.Combine(str, Globals.CurrentDownloadFileName);
+            _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = Path.Combine(str, Globals.CurrentDownloadFileName.GetValue());
 
             _startDownloadButton.Location = new Point(3, 90);
             _startDownloadButton.Size = new Size(302, 25);
@@ -69,7 +68,7 @@ namespace Derpi_Downloader.Forms
             _pauseResumeButton.Visible = false;
             _pauseResumeButton.Enabled = false;
             _pauseResumeButton.Click += OnPauseResumeButton_Click;
-            
+
             _removeOrRestartDownloadButton.Location = new Point(304, 90);
             _removeOrRestartDownloadButton.Size = new Size(30, 30);
             _removeOrRestartDownloadButton.Click += OnRemoveOrRestartDownloadButtonClick;
@@ -83,7 +82,7 @@ namespace Derpi_Downloader.Forms
             _downloadProgressBar.Size = new Size(_startDownloadButton.Size.Width - 3, 5);
             _downloadProgressBar.Location = new Point(5, 115);
             _downloadProgressBar.Style = ProgressBarStyle.Continuous;
-            
+
             _downloadValueLabel.Size = new Size(_logRichTextBox.Size.Width, 30);
             _downloadValueLabel.Location = new Point(_logRichTextBox.Location.X, _logRichTextBox.Location.Y + _logRichTextBox.Size.Height);
             _downloadValueLabel.AutoSize = false;
@@ -104,15 +103,15 @@ namespace Derpi_Downloader.Forms
             Controls.Add(_downloadValueLabel);
             Controls.Add(_downloadProgressBar);
             AcceptButton = _startDownloadButton;
-            Globals.APIKeyChanged += OnTextChanged;
+            Globals.APIKey.Changed += OnTextChanged;
             ResumeLayout();
         }
 
-        
+
         private ProgressBar _downloadProgressBar;
 
         private LoggerRichTextBox _logRichTextBox;
-        
+
         private LoggerRichTextBox LogRichTextBox
         {
             get

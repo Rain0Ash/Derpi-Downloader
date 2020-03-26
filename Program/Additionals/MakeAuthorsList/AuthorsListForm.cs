@@ -7,7 +7,7 @@ using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Logger;
 using Common_Library.Types.Other;
 using Common_Library.Utils;
-using Derpi_Downloader.Localization;
+using Common_Library.Utils.IO;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
 {
@@ -18,7 +18,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         public AuthorsListForm()
         {
             InitializeComponent();
-            
+
             String path = StringUtils.BeforeFormatVariables(Globals.CurrentDownloadPath);
 
             if (String.IsNullOrEmpty(path) || !Common_Library.LongPath.Directory.Exists(path))
@@ -26,7 +26,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 return;
             }
 
-            PathObject pathObject = new PathObject(path, PathType.Folder, PathStatus.Exist){Recursive = true};
+            PathObject pathObject = new PathObject(path, PathType.Folder, PathStatus.Exist) {Recursive = true};
             _includePathListBox.ListBox.Add(pathObject);
         }
 
@@ -58,8 +58,8 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 _startButton.Enabled = true;
                 return;
             }
-            
-            Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListFilesFound, MessageType.Good, new Object[]{authorsList.FilesForAnalyzeFound}));
+
+            Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListFilesFound, MessageType.Good, new Object[] {authorsList.FilesForAnalyzeFound}));
             _progressBar.Minimum = 0;
             _progressBar.Value = 0;
             _progressBar.Maximum = authorsList.FilesForAnalyzeFound;
@@ -72,11 +72,11 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             };
             _artistsRichTextBox.Text = await authorsList.GetArtistsAsync().ConfigureAwait(true);
 
-            Globals.Logger.Log(new LogMessage(Globals.Localization.FilesAnalyzed, MessageType.Action, new Object[]{authorsList.CurrentFilesAnalyzed}));
+            Globals.Logger.Log(new LogMessage(Globals.Localization.FilesAnalyzed, MessageType.Action, new Object[] {authorsList.CurrentFilesAnalyzed}));
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCompleted, MessageType.Good));
-            
+
             _startButton.Enabled = true;
-            
+
             if (this != ActiveForm)
             {
                 return;

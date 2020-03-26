@@ -13,11 +13,11 @@ namespace System.Windows.Forms
     {
         private void InitializeComponent()
         {
-            _addressLabel= new Label();
-            _portLabel= new Label();
-            _colonLabel= new Label();
-            _loginLabel= new Label();
-            _passwordLabel= new Label();
+            _addressLabel = new Label();
+            _portLabel = new Label();
+            _colonLabel = new Label();
+            _loginLabel = new Label();
+            _passwordLabel = new Label();
             _addressTextBox = new IPTextBox();
             _portTextBox = new PortTextBox();
             _loginTextBox = new HidenTextBox();
@@ -25,24 +25,24 @@ namespace System.Windows.Forms
             _saveProxyButton = new Button();
             _resetProxyButton = new Button();
             _helpToolTip = new HelpToolTip();
-            
+
             _addressLabel.Location = new Point(3, 1);
             _addressLabel.Size = new Size(100, 15);
-            
+
             _addressTextBox.Location = new Point(5, 17);
             _addressTextBox.Size = new Size(100, 25);
             _addressTextBox.DefaultHost = @"127.0.0.1";
             _addressTextBox.TextChanged += (sender, args) => CheckAddressValid();
-            
+
             _colonLabel.Location = new Point(101, 16);
             _colonLabel.Size = new Size(10, 25);
             _colonLabel.Font = new Font(Font.Name, Font.Size + 4);
             _colonLabel.TextAlign = ContentAlignment.TopLeft;
             _colonLabel.Text = @":";
-            
+
             _portLabel.Location = new Point(107, 1);
             _portLabel.Size = new Size(100, 15);
-            
+
             _portTextBox.Location = new Point(110, 17);
             _portTextBox.Size = new Size(36, 25);
             _portTextBox.DefaultPort = 3128;
@@ -50,21 +50,21 @@ namespace System.Windows.Forms
 
             _loginLabel.Location = new Point(3, 39);
             _loginLabel.Size = new Size(140, 15);
-            
+
             _loginTextBox.Location = new Point(5, 54);
             _loginTextBox.Size = new Size(140, 25);
 
             _passwordLabel.Location = new Point(3, 75);
             _passwordLabel.Size = new Size(140, 15);
-            
+
             _passwordTextBox.Location = new Point(5, 90);
             _passwordTextBox.Size = new Size(140, 25);
-            
+
             _saveProxyButton.Location = new Point(3, 115);
             _saveProxyButton.Size = new Size(120, 25);
             _saveProxyButton.TextAlign = ContentAlignment.MiddleCenter;
             _saveProxyButton.Click += SaveProxyButtonClickAsync;
-            
+
             _resetProxyButton.Location = new Point(123, 114);
             _resetProxyButton.Size = new Size(_saveProxyButton.Size.Height, _saveProxyButton.Size.Height);
             _resetProxyButton.Image = new Bitmap(Images.Fill.ResetGear, new Size(_resetProxyButton.Size.Height / 2, _resetProxyButton.Size.Height / 2));

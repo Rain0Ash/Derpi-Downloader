@@ -8,6 +8,7 @@ using Common_Library.Utils;
 using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Labels;
 using Common_Library.GUI.WinForms.ListBoxes;
+using Common_Library.Utils.Math;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
 {
@@ -30,7 +31,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _includePathLabel.Size = new Size(300, 15);
             _includePathLabel.TextAlign = ContentAlignment.MiddleLeft;
             _includePathLabel.AutoSize = false;
-            
+
             _includePathListBox.Location = new Point(0, 20);
             _includePathListBox.Size = new Size(300, 60);
 
@@ -38,10 +39,10 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _excludePathLabel.Size = new Size(300, 15);
             _excludePathLabel.TextAlign = ContentAlignment.MiddleLeft;
             _excludePathLabel.AutoSize = false;
-            
+
             _excludePathListBox.Location = new Point(300, 20);
             _excludePathListBox.Size = new Size(300, 60);
-            
+
             _artistsListLabel.Location = new Point(0, 78);
             _artistsListLabel.Size = new Size(300, 15);
             _artistsListLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -54,12 +55,12 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _startButton.Location = new Point(0, 160);
             _startButton.Size = new Size(300, 30);
             _startButton.Click += (sender, args) => Task.Run(ShowArtists);
-            
+
             _progressBar.Location = new Point(0, 190);
             _progressBar.Size = new Size(600, 10);
             _progressBar.Step = 1;
             _progressBar.Style = ProgressBarStyle.Continuous;
-            
+
             _stepLabel.Location = new Point(_startButton.Size.Width, _startButton.Location.Y);
             _stepLabel.Size = new Size(300, 30);
             _stepLabel.AutoSize = false;
@@ -67,7 +68,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _stepLabel.Font = new Font(Font.Name, Font.Size + 3);
             _stepLabel.DisplayType = MathUtils.DisplayType.ValueAndPercent;
             _stepLabel.PercentFractionalCount = 2;
-            
+
             MinimizeBox = false;
             MaximizeBox = false;
             ShowInTaskbar = false;

@@ -18,8 +18,9 @@ namespace Derpi_Downloader.Forms
         }
 
         public Boolean ValidSearchQuery { get; private set; }
-        
-        private static readonly Dictionary<Regex, String> ReplaceDictionary = new Dictionary<Regex, String>{
+
+        private static readonly Dictionary<Regex, String> ReplaceDictionary = new Dictionary<Regex, String>
+        {
             {new Regex($@"{DerpiAPI.SiteRegexPart + "tags" + @"\/?"}", RegexOptions.IgnoreCase), String.Empty},
             {new Regex(@"(-colon-|%3A)", RegexOptions.IgnoreCase), ":"},
             {new Regex(@"(%3)", RegexOptions.IgnoreCase), String.Empty},
@@ -31,7 +32,7 @@ namespace Derpi_Downloader.Forms
             {new Regex(@"(-dash-)", RegexOptions.IgnoreCase), "-"},
             {new Regex(@"(\+)", RegexOptions.IgnoreCase), " "}
         };
-        
+
         private void OnTextChanged()
         {
             Replace(ReplaceDictionary);

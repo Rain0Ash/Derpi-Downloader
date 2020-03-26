@@ -5,8 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
-using Common_Library.Utils;
-using Derpi_Downloader.RegKeys;
+using Common_Library.Utils.Network;
 using Derpi_Downloader.Settings;
 
 namespace System.Windows.Forms
@@ -32,10 +31,10 @@ namespace System.Windows.Forms
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            _addressTextBox.Text = Globals.WebProxyAddress;
-            _portTextBox.Text = Globals.WebProxyPort.ToString();
-            _loginTextBox.Text = Globals.WebProxyLogin;
-            _passwordTextBox.Text = Globals.WebProxyPassword;
+            _addressTextBox.Text = Globals.ProxyAddress.GetValue();
+            _portTextBox.Text = Globals.ProxyPort.GetValue().ToString();
+            _loginTextBox.Text = Globals.ProxyLogin.GetValue();
+            _passwordTextBox.Text = Globals.ProxyPassword.GetValue();
         }
 
         private void CheckAddressValid()
@@ -45,15 +44,15 @@ namespace System.Windows.Forms
 
         private async void SaveProxyButtonClickAsync(Object sender, EventArgs e)
         {
-            if (_addressTextBox.Text == Globals.WebProxyAddress &&
-                NetworkUtils.ValidatePort(_portTextBox.Text) == Globals.WebProxyPort &&
-                _loginTextBox.Text == Globals.WebProxyLogin &&
-                _passwordTextBox.Text == Globals.WebProxyPassword)
+            if (_addressTextBox.Text == Globals.ProxyAddress.GetValue() &&
+                _portTextBox.Text == Globals.ProxyPort.GetValue().ToString() &&
+                _loginTextBox.Text == Globals.ProxyLogin.GetValue() &&
+                _passwordTextBox.Text == Globals.ProxyPassword.GetValue())
             {
                 Close();
                 return;
             }
-            
+
             if (_addressTextBox.Text == @"127.0.0.1" && String.IsNullOrEmpty(_loginTextBox.Text) && String.IsNullOrEmpty(_passwordTextBox.Text))
             {
                 ResetProxy();
@@ -61,11 +60,13 @@ namespace System.Windows.Forms
                 return;
             }
 
-            Int32 port = NetworkUtils.ValidatePort(_portTextBox.Text);
-            
-            if (port == 0)
+
+            Int32.TryParse(_portTextBox.Text, out Int32 port);
+
+            if (!NetworkUtils.ValidatePort(port))
             {
-                new MessageForm(Globals.Localization.InvalidProxyPort, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning, MessageBoxButtons.OK, new []{Globals.Localization.OK}).ShowDialog();
+                new MessageForm(Globals.Localization.InvalidProxyPort, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning,
+                    MessageBoxButtons.OK, new[] {Globals.Localization.OK}).ShowDialog();
                 return;
             }
 
@@ -84,31 +85,35 @@ namespace System.Windows.Forms
             {
                 check = await checkTask.ConfigureAwait(true);
             }
-            
+
             switch (check)
             {
                 case HttpStatusCode.OK:
                     Globals.WebProxy = proxy;
-                    ConfigKeys.ProxyAddress = Globals.WebProxyAddress = _addressTextBox.Text;
-                    ConfigKeys.ProxyPort = Globals.WebProxyPort = NetworkUtils.ValidatePort(_portTextBox.Text);
-                    ConfigKeys.ProxyLogin = Globals.WebProxyLogin = _loginTextBox.Text;
-                    ConfigKeys.ProxyPassword = Globals.WebProxyPassword = _passwordTextBox.Text;
+                    Globals.ProxyAddress.SetValue(_addressTextBox.Text);
+                    Globals.ProxyPort.SetValue(port);
+                    Globals.ProxyLogin.SetValue(_loginTextBox.Text);
+                    Globals.ProxyPassword.SetValue(_passwordTextBox.Text);
                     Close();
                     break;
                 case HttpStatusCode.Forbidden:
-                    new MessageForm(Globals.Localization.ProxyConnectionInvalid, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning, MessageBoxButtons.OK, new []{Globals.Localization.OK}).ShowDialog();
+                    new MessageForm(Globals.Localization.ProxyConnectionInvalid, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning,
+                        MessageBoxButtons.OK, new[] {Globals.Localization.OK}).ShowDialog();
                     break;
                 case HttpStatusCode.ProxyAuthenticationRequired:
-                    new MessageForm(Globals.Localization.InvalidProxyCredentials, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning, MessageBoxButtons.OK, new []{Globals.Localization.OK}).ShowDialog();
+                    new MessageForm(Globals.Localization.InvalidProxyCredentials, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning,
+                        MessageBoxButtons.OK, new[] {Globals.Localization.OK}).ShowDialog();
                     break;
                 case HttpStatusCode.ServiceUnavailable:
-                    new MessageForm(Globals.Localization.ProxyIsUnreachable, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning, MessageBoxButtons.OK, new []{Globals.Localization.OK}).ShowDialog();
+                    new MessageForm(Globals.Localization.ProxyIsUnreachable, Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning,
+                        MessageBoxButtons.OK, new[] {Globals.Localization.OK}).ShowDialog();
                     break;
                 default:
-                    new MessageForm($"{Globals.Localization.UnknownError}\n{check}", Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning, MessageBoxButtons.OK, new []{Globals.Localization.OK}).ShowDialog();
+                    new MessageForm($"{Globals.Localization.UnknownError}\n{check}", Globals.Localization.Error, Images.Basic.Warning, Images.Basic.Warning,
+                        MessageBoxButtons.OK, new[] {Globals.Localization.OK}).ShowDialog();
                     break;
             }
-            
+
             _addressTextBox.Enabled = true;
             _portTextBox.Enabled = true;
             _loginTextBox.Enabled = true;
@@ -120,11 +125,17 @@ namespace System.Windows.Forms
         public void ResetProxy()
         {
             Globals.WebProxy = null;
-            _addressTextBox.Text = ConfigKeys.ProxyAddress = Globals.WebProxyAddress = _addressTextBox.DefaultHost;
+            _addressTextBox.Text = _addressTextBox.DefaultHost;
+            Globals.ProxyAddress.SetValue(_addressTextBox.DefaultHost);
             _portTextBox.Text = _portTextBox.DefaultPort.ToString();
-            ConfigKeys.ProxyPort = Globals.WebProxyPort = NetworkUtils.ValidatePort(_portTextBox.Text);
-            _loginTextBox.Text = ConfigKeys.ProxyLogin = Globals.WebProxyLogin = String.Empty;
-            _passwordTextBox.Text = ConfigKeys.ProxyPassword = Globals.WebProxyPassword = String.Empty;
+
+            Int32.TryParse(_portTextBox.Text, out Int32 port);
+            
+            Globals.ProxyPort.SetValue(port);
+            _loginTextBox.Text = String.Empty;
+            Globals.ProxyLogin.ResetValue();
+            _passwordTextBox.Text = String.Empty;
+            Globals.ProxyPassword.ResetValue();
         }
 
         private void ResetProxyButtonClick(Object sender, EventArgs e)

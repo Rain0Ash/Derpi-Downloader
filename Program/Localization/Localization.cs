@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Common_Library.App;
 using Common_Library.Localization;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable NotAccessedField.Global
 
@@ -21,7 +22,7 @@ namespace Derpi_Downloader.Localization
         public const String DerpiBooruProfileLink = DerpiBooruLink + "/registration/edit";
         public const String Licence = "Mozilla Public License 2.0";
         public const String LicenceLink = Https + "mozilla.org/en-US/MPL/2.0";
-        
+
         public CultureStrings ProjectName;
         public CultureStrings CriticalExceptionOccurred;
         public CultureStrings CriticalExceptionOccurredText;
@@ -152,16 +153,17 @@ namespace Derpi_Downloader.Localization
         public CultureStrings DownloadForSearchCompleted;
         public CultureStrings DownloadForSearchInvalid;
         public CultureStrings DownloadTaskIsCanceled;
-        
+
         public CultureStrings AboutFormatTitle;
 
         public Dictionary<String, CultureStrings> AboutFormatDictionary { get; } = new Dictionary<String, CultureStrings>();
 
-        public ProgramLocalization(Int32 lcid) :
+        public ProgramLocalization(Int32 lcid)
+            :
             base(lcid, new CultureStrings())
         {
         }
-        
+
         protected override void InitializeLanguage()
         {
             String appVersion = App.Version.GetVersion();
@@ -170,35 +172,35 @@ namespace Derpi_Downloader.Localization
                 "Derpi Downloader",
                 "Derpi Загрузчик",
                 "Derpi Herunterladen");
-            
+
             CriticalExceptionOccurred = new CultureStrings(
                 "Crititical exception occurred!",
                 "Произошло критическое исключение!",
                 "Kritische Ausnahme aufgetreten!");
-            
+
             CriticalExceptionOccurredText = new CultureStrings(
                 $"Crititical exception occurred!{NewLine}Information about this exception:",
                 $"Произошло критическое исключение!{NewLine}Информация об этом исключении:",
                 $"Kritische Ausnahme ist aufgetreten!{NewLine}Informationen zu dieser Ausnahme:");
-            
+
             CriticalExceptionOccurredRestartButton = new CultureStrings(
                 "Restart",
                 "Перезапустить",
                 "Neustart");
-            
+
             CriticalExceptionOccurredExitButton = new CultureStrings(
                 "Exit",
                 "Выйти",
                 "Ausgang");
-            
+
             InitializeStageException = new CultureStrings(
                 "Exception on initialize stage",
                 "Ошибка на стадии инициализации");
-            
+
             InitializeExceptionOccured = new CultureStrings(
                 "Initialize exception occured",
                 "Вызвана ошибка при инициализации");
-            
+
             MainForm = new CultureStrings(
                 $"{ProjectName.en} {appVersion}",
                 $"{ProjectName.ru} {appVersion}",
@@ -218,17 +220,17 @@ namespace Derpi_Downloader.Localization
                 "Program successfully started",
                 "Программа успешно запущена",
                 "Programm erfolgreich gestartet");
-            
+
             SelectFile = new CultureStrings(
                 "Select file",
                 "Выберите файл",
                 "Datei aussuchen");
-            
+
             SelectFolder = new CultureStrings(
                 "Select folder",
                 "Выберите папку",
                 "Ordner auswählen");
-            
+
             SettingsForm = new CultureStrings(
                 "Settings",
                 "Настройки",
@@ -237,18 +239,18 @@ namespace Derpi_Downloader.Localization
             APILabel = new CultureStrings(
                 "API Key",
                 "API Ключ",
-                "API-Schlüssel");            
-            
+                "API-Schlüssel");
+
             SaveAPIButton = new CultureStrings(
                 "Save API",
                 "Сохранить API",
-                "Speichern API");     
-            
+                "Speichern API");
+
             ChangeAPIButton = new CultureStrings(
                 "Change API",
                 "Изменить API",
                 "Ändern API");
-            
+
             ResetAPIButton = new CultureStrings(
                 "Reset API",
                 "Сбросить API",
@@ -263,7 +265,7 @@ namespace Derpi_Downloader.Localization
                 "Default download folder",
                 "Стандартная папка загрузки",
                 "Standard download ordner");
-            
+
             DefaultDownloadNameLabel = new CultureStrings(
                 "Default download filename",
                 "Стандартное имя файла",
@@ -282,21 +284,21 @@ namespace Derpi_Downloader.Localization
             QueueAutoDownloadCheckBox = new CultureStrings(
                 "Auto download from queue",
                 "Автоскачивание из очереди");
-            
+
             ExistFileRewriteCheckBoxToolTip = new CultureStrings(
                 "Pass/overwrite files with matching names",
                 "Пропускать/перезаписывать файлы при совпадении имен",
                 "Dateien mit übereinstimmenden Namen übergeben / überschreiben");
-            
+
             QueueAutoDownloadCheckBoxToolTip = new CultureStrings(
                 "Auto start download request from queue",
                 "Автоматически начинать скачивания запроса из очереди");
-            
+
             ConvertSVGToPNGCheckBox = new CultureStrings(
                 "Convert SVG to PNG",
                 "Конвертировать SVG в PNG",
                 "Konvertieren Sie SVG in PNG");
-            
+
             ConvertSVGToPNGCheckBoxToolTip = new CultureStrings(
                 "Convert SVG image to PNG and save both",
                 "Конвертировать SVG изображение в PNG и сохранять две версии",
@@ -311,7 +313,7 @@ namespace Derpi_Downloader.Localization
                 "New download",
                 "Новое скачивание",
                 "Neuer download");
-            
+
             SearchQueryLabel = new CultureStrings(
                 "Search query",
                 "Поисковый запрос",
@@ -341,62 +343,62 @@ namespace Derpi_Downloader.Localization
                 "API key is not valid",
                 "API ключ недействителен",
                 "Der API-Schlüssel ist ungültig");
-            
+
             CurrentAPIKeyInvalid = new CultureStrings(
                 "Current API key is not valid",
                 "Текущий API ключ недействителен",
                 "Der aktuelle API-Schlüssel ist ungültig");
-            
+
             ProxySettings = new CultureStrings(
                 "Proxy",
                 "Прокси",
                 "Proxy");
-            
+
             ProxyAddressLabel = new CultureStrings(
                 "Proxy address",
                 "Адрес прокси",
                 "Proxy-Adresse");
-            
+
             ProxyPortLabel = new CultureStrings(
                 "Port",
                 "Порт",
                 "Port");
-            
+
             ProxyLoginLabel = new CultureStrings(
                 "Authorization name",
                 "Имя учетной записи",
                 "Autorisierungsname");
-            
+
             ProxyPasswordLabel = new CultureStrings(
                 "Password",
                 "Пароль",
                 "Passwort");
-            
+
             SaveProxyButton = new CultureStrings(
                 "Save proxy",
                 "Сохранить прокси",
                 "Proxy speichern");
-            
+
             ResetProxyButtonToolTip = new CultureStrings(
                 "Reset proxy settings",
                 "Сбросить настройки прокси",
                 "Proxy-Einstellungen zurücksetzen");
-            
+
             InvalidProxyPort = new CultureStrings(
                 "Invalid proxy port",
                 "Неверный порт прокси",
                 "Ungültiger Proxy-Port");
-            
+
             InvalidProxyCredentials = new CultureStrings(
                 "Invalid proxy credentials",
                 "Неверные авторизационные данные",
                 "Ungültige Proxy-Anmeldeinformationen");
-            
+
             ProxyIsUnreachable = new CultureStrings(
                 "Proxy is unreachable",
                 "Прокси не отвечает",
                 "Proxy ist nicht erreichbar");
-            
+
             ProxyConnectionInvalid = new CultureStrings(
                 "Proxy connection invalid",
                 "Ошибка подключения к прокси");
@@ -405,7 +407,7 @@ namespace Derpi_Downloader.Localization
                 "Nothing found for request",
                 "По запросу ничего не найдено",
                 "Nichts gefunden für Anfrage");
-            
+
             EnteredAPIKeyInvalid = new CultureStrings(
                 "Entered API key is not valid",
                 "Введенный API ключ недействителен",
@@ -446,7 +448,7 @@ namespace Derpi_Downloader.Localization
             UnavailableFunction = new CultureStrings(
                 "Unavailable function",
                 "Недоступная функция");
-            
+
             AdditionalFunctions = new CultureStrings(
                 "Additional functions",
                 "Дополнительные функции");
@@ -454,11 +456,11 @@ namespace Derpi_Downloader.Localization
             DuplicateSearchButton = new CultureStrings(
                 "Duplicate search",
                 "Поиск повторений");
-            
+
             MakeAuthorsListButton = new CultureStrings(
                 "List of authors",
                 "Список авторов");
-            
+
             MakeAuthorsListButtonToolTip = new CultureStrings(
                 "Make list of authors of downloaded images",
                 "Создание списка авторов из скачанных изображений");
@@ -474,7 +476,7 @@ namespace Derpi_Downloader.Localization
             AuthorListFilesFound = new CultureStrings(
                 "Found {0} files for analyzing",
                 "Найдено {0} файлов для анализа");
-            
+
             AuthorListFilesNotFound = new CultureStrings(
                 "Author list files not found!",
                 "Файлы для создания списка не найдены!");
@@ -482,73 +484,73 @@ namespace Derpi_Downloader.Localization
             AuthorListCompleted = new CultureStrings(
                 "Author list creating completed",
                 "Завершено создание списка авторов");
-            
+
             FilesAnalyzed = new CultureStrings(
                 "Files analyzed: {0}",
                 "Файлов проанализировано: {0}");
-            
+
             IncludedPathsLabel = new CultureStrings(
                 "Included paths",
                 "Включенные пути");
-            
+
             ExcludedPathsLabel = new CultureStrings(
                 "Excluded paths",
                 "Исключенные пути");
-            
+
             ArtistsListLabel = new CultureStrings(
                 "Artist list",
                 "Список авторов");
-            
+
             ChangePathRecursiveToolTip = new CultureStrings(
                 "Switch path recursive status",
                 "Переключить рекурсивный статус пути");
-            
+
             AddPathToolTip = new CultureStrings(
                 "Add path",
                 "Добавить путь");
-            
+
             RemovePathToolTip = new CultureStrings(
                 "Remove path",
                 "Удалить путь");
-            
+
             AddRequestToDownloadQueueToolTip = new CultureStrings(
                 "Add request to download queue",
                 "Добавить запрос в очередь скачивания");
-            
+
             RemoveRequestToDownloadQueueToolTip = new CultureStrings(
                 "Remove request from download queue",
                 "Удалить запрос из очереди скачивания");
-            
+
             GoToAPIPageToolTip = new CultureStrings(
                 "Open page with API",
                 "Открыть страницу с API",
                 "Seite mit API öffnen");
-            
+
             FileDialogButtonToolTip = new CultureStrings(
                 "Select file path",
                 "Выбрать путь к файлу",
                 "Dateipfad auswählen");
-            
+
             FolderDialogButtonToolTip = new CultureStrings(
                 "Select folder path",
                 "Выбрать путь к папке",
                 "Ordnerpfad auswählen");
-            
+
             PathTypeChangeButtonToRelativeToolTip = new CultureStrings(
                 "Transform to relative path",
                 "Преобразовать в относительный путь",
                 "In relativen Pfad umwandeln");
-            
+
             PathTypeChangeButtonToAbsoluteToolTip = new CultureStrings(
                 "Transform to absolute path",
                 "Преобразовать в абсолютный путь",
                 "In absoluten Pfad transformieren");
-            
+
             FormatHelpButtonToolTip = new CultureStrings(
                 "Show available variables for replace",
                 "Показать доступные переменные для замены",
                 "Verfügbare Variablen zum Ersetzen anzeigen");
-            
+
             ProxyButtonToolTip = new CultureStrings(
                 "Open proxy settings",
                 "Открыть настройки прокси",
@@ -568,7 +570,7 @@ namespace Derpi_Downloader.Localization
                 "Cancel task",
                 "Отменить задание",
                 "Aufgabe abbrechen");
-            
+
             ReuseDownloadTaskControlToolTip = new CultureStrings(
                 "Reuse control",
                 "Использовать форму снова",
@@ -577,7 +579,7 @@ namespace Derpi_Downloader.Localization
             Exit = new CultureStrings(
                 "Exit",
                 "Выход");
-            
+
             OK = new CultureStrings(
                 "OK",
                 "Понятно",
@@ -587,22 +589,22 @@ namespace Derpi_Downloader.Localization
                 "Yes",
                 "Да",
                 "Ja");
-            
+
             No = new CultureStrings(
                 "No",
                 "Нет",
                 "Nein");
-            
+
             Cancel = new CultureStrings(
                 "Cancel",
                 "Отменить",
                 "Stornieren");
-            
+
             Retry = new CultureStrings(
                 "Retry",
                 "Повторить",
                 "Wiederholen");
-            
+
             Ignore = new CultureStrings(
                 "Ignore",
                 "Игнорировать",
@@ -612,94 +614,94 @@ namespace Derpi_Downloader.Localization
                 "Accept",
                 "Принять",
                 "Akzeptieren");
-            
+
             Close = new CultureStrings(
                 "Close",
                 "Закрыть",
                 "Schließen");
-            
+
             Select = new CultureStrings(
                 "Select",
                 "Выбрать");
-            
+
             Perform = new CultureStrings(
                 "Perform",
                 "Выполнить",
                 "Ausführen");
-            
+
             Resume = new CultureStrings(
                 "Resume",
                 "Возобновить",
                 "Fortsetzen");
-            
+
             Pause = new CultureStrings(
                 "Pause",
                 "Приостановить",
                 "Pause");
-            
+
             Debug = new CultureStrings(
                 "Debug",
                 "Отладка",
                 "Debuggen");
-            
+
             Action = new CultureStrings(
                 "Action",
                 "Действие",
                 "Aktion");
-            
+
             Good = new CultureStrings(
                 "Good",
                 "Хорошо",
                 "Gut");
-            
+
             Warning = new CultureStrings(
                 "Warning",
                 "Предупреждение",
                 "Warnung");
-            
+
             CriticalWarning = new CultureStrings(
                 "Critical warning",
                 "Критическое предупреждение",
                 "Kritische warnung");
-            
+
             Error = new CultureStrings(
                 "Error",
                 "Ошибка",
                 "Fehler");
-            
+
             CriticalError = new CultureStrings(
                 "Critical error",
                 "Критическая ошибка",
                 "Kritischer fehler");
-                
+
             FatalError = new CultureStrings(
                 "Fatal error",
                 "Фатальная ошибка",
                 "Fataler fehler");
-            
+
             UnknownError = new CultureStrings(
                 "Unknown error",
                 "Неизвестная ошибка",
                 "Unbekannter fehler");
-            
+
             GetPageError = new CultureStrings(
                 "Error on getting page {0}",
                 "Ошибка при получении страницы {0}",
                 "Fehler beim Abrufen der Seite {0}");
 
             NoImagesFound = new CultureStrings(
-                "No images found", 
+                "No images found",
                 "Не найдены изображения",
                 "Keine Bilder gefunden");
-            
+
             //TODO:
             CantFoundDuplicateImage = new CultureStrings(
-                "Can't found duplicate image", 
+                "Can't found duplicate image",
                 "Не найдено дублирующее изображения",
                 "Keine Bilder gefunden");
 
             ZeroDownloadPagesArgument = new CultureStrings(
-                "Count of pages argument is 0", 
+                "Count of pages argument is 0",
                 "Аргумент количества страниц равен 0",
                 "Argument für Seitenzahl ist 0");
 
@@ -707,16 +709,16 @@ namespace Derpi_Downloader.Localization
                 "Error getting image {0}",
                 "Ошибка получения изображения {0}",
                 "Fehler beim Abrufen von Bild {0}");
-            
+
             InvalidImageHashError = new CultureStrings(
                 $"Image: {{0}}{NewLine} has invalid hash{NewLine}Correct hash{NewLine}{{1}}{NewLine}Image hash{NewLine}{{2}}{NewLine}",
                 $"Изображение: {{0}}{NewLine}имеет неверный хэш{NewLine}Правильный хэш{NewLine}{{1}}{NewLine}Хэш изображения{NewLine}{{2}}{NewLine}",
                 $"Bild: {{0}} {NewLine} hat ungültigen Hash {NewLine} Korrekter Hash {NewLine} {{1}} {NewLine} Bild-Hash {NewLine} {{2}} {NewLine}");
-            
+
             FormatFileNameError = new CultureStrings(
                 "Image: {{0}} format filename error",
                 "Изображение: {{0}} ошибка при подстановке значений имени файла");
-            
+
             FormatDirectoryError = new CultureStrings(
                 "Format directory error",
                 "Ошибка при сборке имени директории");
@@ -725,17 +727,17 @@ namespace Derpi_Downloader.Localization
                 "Error on create directory",
                 "Ошибка при создании директории",
                 "Fehler beim Erstellen des Verzeichnisses");
-            
+
             WriteAccessDeniedError = new CultureStrings(
                 "No write access on this path",
                 "Отсутствует доступ на запись по данному пути",
                 "Kein Schreibzugriff auf diesen Pfad");
-            
+
             InitializedInvalidTaskError = new CultureStrings(
                 "An attempt was made to initialize an invalid task",
                 "Была предпринята попытка инициализировать неверную задачу",
                 "Es wurde versucht, eine ungültige Aufgabe zu initialisieren");
-            
+
             StartedInvalidTaskError = new CultureStrings(
                 "An attempt was made to start an invalid task",
                 "Была предпринята попытка запустить неверную задачу",
@@ -745,7 +747,7 @@ namespace Derpi_Downloader.Localization
                 "Image {0} waiting too long. Retrying.",
                 "Слишком долгое ожидание изображения id:{0}. Перезапуск.",
                 "Bild {0} wartet zu lange. Wiederholen.");
-            
+
             PageWaitToLongRetry = new CultureStrings(
                 "Page {0} waiting too long. Retrying.",
                 "Слишком долгое ожидание страницы №:{0}. Перезапуск.",
@@ -755,32 +757,32 @@ namespace Derpi_Downloader.Localization
                 "Created",
                 "Создано",
                 "Erstellt");
-            
+
             ClickForResume = new CultureStrings(
                 "Click for resume",
                 "Нажмите чтобы возобновить",
                 "Klicken Sie hier, um fortzufahren");
-            
+
             ClickForPause = new CultureStrings(
                 "Click for pause",
                 "Нажмите чтобы приостановить",
                 "Klicken Sie für eine einhalten");
-            
+
             DownloadStarted = new CultureStrings(
                 "Download started",
                 "Загрузка начата",
                 "Download gestartet");
-            
+
             DownloadCompleted = new CultureStrings(
                 "Download completed",
                 "Загрузка завершена",
                 "Download abgeschlossen");
-            
+
             _downloadForSearch = new CultureStrings(
                 "Download for search: {0}",
                 "Загрузка для поискового запроса {0}",
                 "Download zur Suche: {0}");
-            
+
             DownloadForSearchStarted = new CultureStrings(
                 $"{_downloadForSearch.en} started",
                 $"{_downloadForSearch.ru} начата",
@@ -790,12 +792,12 @@ namespace Derpi_Downloader.Localization
                 $"{_downloadForSearch.en} completed",
                 $"{_downloadForSearch.ru} завершена",
                 $"{_downloadForSearch.de} abgeschlossen");
-            
+
             DownloadForSearchInvalid = new CultureStrings(
                 $"{_downloadForSearch.en} invalid",
                 $"{_downloadForSearch.ru} завершена неверно",
                 $"{_downloadForSearch.de} ungültig");
-            
+
             DownloadTaskIsCanceled = new CultureStrings(
                 "Download task {0} is canceled",
                 "Задание загрузки {0} отменено",
@@ -810,24 +812,24 @@ namespace Derpi_Downloader.Localization
                 "ID of image",
                 "ID изображения",
                 "ID des Bildes");
-            
+
             AboutFormatDictionary["artist"] = new CultureStrings(
                 "First artist of image",
                 "Первый автор изображения",
                 "Erster Künstler des Bildes");
-            
+
             AboutFormatDictionary["artist?"] = new CultureStrings(
                 "First artist of image or uploader",
                 "Первый автор изображения или имя выложившего изображение");
-            
+
             AboutFormatDictionary["artists"] = new CultureStrings(
                 "All artists of image",
                 "Все авторы изображения");
-            
+
             AboutFormatDictionary["artists?"] = new CultureStrings(
                 "All artists of image or uploader",
                 "Все авторы изображения или имя выложившего изображение");
-            
+
             AboutFormatDictionary["tags"] = new CultureStrings(
                 "Tags of image",
                 "Теги изображения",
@@ -837,46 +839,46 @@ namespace Derpi_Downloader.Localization
                 "Score of image",
                 "Количество очков изображения",
                 "Partitur des Bildes");
-            
+
             AboutFormatDictionary["width"] = new CultureStrings(
                 "Width of image",
                 "Ширина изображения",
                 "Breite des Bildes");
-            
+
             AboutFormatDictionary["height"] = new CultureStrings(
                 "Height of image",
                 "Высота изображения",
                 "Bildhöhe");
-            
+
             AboutFormatDictionary["size"] = new CultureStrings(
                 "Size of image ({Width}x{Height})",
                 "Размер изображения ({Ширина}x{Высота})");
-            
+
             AboutFormatDictionary["tags_count"] = new CultureStrings(
                 "Tags count of image",
                 "Количество тегов изображения",
                 "Anzahl der Tags des Bildes");
-            
+
             AboutFormatDictionary["name"] = new CultureStrings(
                 "Name of image (ID + tags)",
                 "Имя изображения (ID + теги)",
                 "Name des Bildes (ID + Tags)");
-            
+
             AboutFormatDictionary["uploader"] = new CultureStrings(
                 "Uploader of image",
                 "Имя выложившего изображение",
                 "Uploader des Bildes");
-            
+
             AboutFormatDictionary["ratio"] = new CultureStrings(
                 "Ratio of image",
                 "Коэффициент изображения",
                 "Bildverhältnis");
-            
+
             AboutFormatDictionary["ext"] = new CultureStrings(
                 "Extension of image",
                 "Расширение изображения",
                 "Erweiterung des Bildes");
-            
+
             AboutFormatDictionary["hash"] = new CultureStrings(
                 "Hash of image",
                 "Хэш изображения");

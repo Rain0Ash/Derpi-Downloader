@@ -18,28 +18,40 @@ namespace Derpi_Downloader.Forms
         private readonly EventQueueList<DownloadTaskControl> _taskerList = new EventQueueList<DownloadTaskControl>();
 
         private readonly MainForm _form;
-        
+
         public DownloadControl(MainForm form)
         {
             _form = form;
             InitializeComponent();
-            _form.AddedRequest += request => 
+            _form.AddedRequest += request =>
             {
                 if (CurrentTasks >= MaximumTasks)
                 {
-                    DownloadTaskControl completedTask = _taskerList.FirstOrDefault(task => task.Task?.IsCompleted == true && task.IsFullDownload || task.Task?.IsStarted != true && task.EmptySearchRequest && task.DownloadPathIsDefault);
-                    
-                    if (completedTask == null)
+                    DownloadTaskControl completedTask = _taskerList.FirstOrDefault(TaskRemovable);
+
+                    if (completedTask != null)
                     {
-                        return;
+                        RemoveTask(completedTask);
                     }
-                    
-                    RemoveTask(completedTask);
                 }
 
                 AddDownloadTaskControl(request);
                 _form.RemoveRequest(request);
             };
+        }
+
+        private static Boolean TaskRemovable(DownloadTaskControl task)
+        {
+            return task.Task?.IsCompleted == true && task.IsFullDownload ||
+                task.Task?.IsStarted != true && task.EmptySearchRequest && task.DownloadPathIsDefault;
+        }
+
+        public Boolean HasDownload
+        {
+            get
+            {
+                return !_taskerList.All(TaskRemovable) || _form.GetRequests().Any();
+            }
         }
 
         public Int32 CurrentTasks
@@ -49,7 +61,7 @@ namespace Derpi_Downloader.Forms
                 return _taskerList.Count;
             }
         }
-        
+
         public void AddDownloadTaskControl(DownloadRequest downloadRequest = null)
         {
             if (CurrentTasks >= MaximumTasks)
@@ -58,10 +70,10 @@ namespace Derpi_Downloader.Forms
                 {
                     _form.AddRequest(downloadRequest);
                 }
-                
+
                 return;
             }
-            
+
             downloadRequest ??= new DownloadRequest(String.Empty, Globals.CurrentDownloadPath, false);
             SuspendLayout();
             DownloadTaskControl downloadTaskControl = new DownloadTaskControl(downloadRequest)
@@ -70,15 +82,12 @@ namespace Derpi_Downloader.Forms
             };
             downloadTaskControl.Completed += () =>
             {
-                if (Globals.QueueAutoDownload && _form.GetRequests().Any())
+                if (Globals.QueueAutoDownload.GetValue() && _form.GetRequests().Any())
                 {
                     downloadTaskControl.Close();
                 }
             };
-            downloadTaskControl.NeedClosing += () =>
-            {
-                RemoveTask(downloadTaskControl);
-            };
+            downloadTaskControl.NeedClosing += () => { RemoveTask(downloadTaskControl); };
             downloadTaskControl.NeedClosing += () =>
             {
                 List<Object> invalidRequests = new List<Object>();
@@ -107,17 +116,17 @@ namespace Derpi_Downloader.Forms
                     _form.RemoveRequest(request);
                     AddDownloadTaskControl(request);
                 }
-                
-                if (DerpiAPI.CheckAPI(Globals.APIKey) && CurrentTasks <= 0)
+
+                if (Globals.APIKey.IsValid && CurrentTasks <= 0)
                 {
                     AddDownloadTaskControl();
                 }
             };
             AddTask(downloadTaskControl);
-            
+
             ResumeLayout();
         }
-        
+
         private void AddTask(DownloadTaskControl downloadTaskControl)
         {
             _taskerList.Add(downloadTaskControl);
@@ -136,7 +145,7 @@ namespace Derpi_Downloader.Forms
         {
             UpdateTaskPosition();
         }
-        
+
         private void UpdateTaskPosition()
         {
             SuspendLayout();
@@ -145,6 +154,7 @@ namespace Derpi_Downloader.Forms
                 DownloadTaskControl item = _taskerList[id];
                 item.Location = new Point(id < 3 ? 0 : item.Size.Width, id % 3 * item.Size.Height);
             }
+
             ResumeLayout();
         }
 
