@@ -52,7 +52,7 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.Size = new Size(332, 22);
             _downloadPathTextBox.AutoSize = false;
             _downloadPathTextBox.PathType = PathType.File;
-            _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Search));
+            _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Json.Image));
             _downloadPathTextBox.TextChanged += (sender, args) => OnTextChanged();
             _downloadPathTextBox.Text = Globals.CurrentDownloadPath;
             _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = Path.Combine(str, Globals.CurrentDownloadFileName.GetValue());

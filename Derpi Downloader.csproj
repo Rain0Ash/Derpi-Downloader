@@ -6,6 +6,16 @@
         <RootNamespace>Derpi_Downloader</RootNamespace>
         <UseWindowsForms>true</UseWindowsForms>
         <ApplicationIcon>icon.ico</ApplicationIcon>
+        <StartupObject>Derpi_Downloader.Program</StartupObject>
+        <SignAssembly>false</SignAssembly>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <DebugType>none</DebugType>
+      <DebugSymbols>false</DebugSymbols>
+      <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+      <DefineConstants>TRACE</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

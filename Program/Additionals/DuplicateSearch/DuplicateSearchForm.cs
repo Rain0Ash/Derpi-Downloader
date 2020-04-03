@@ -4,9 +4,9 @@
 using System;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.LongPath;
-using Common_Library.Types.Other;
 using Common_Library.Utils;
 using Common_Library.Utils.IO;
+using Common_Library.Watchers;
 
 namespace Derpi_Downloader.Additionals.DuplicateSearch
 {
@@ -24,7 +24,7 @@ namespace Derpi_Downloader.Additionals.DuplicateSearch
                 return;
             }
 
-            PathObject pathObject = new PathObject(path, PathType.Folder, PathStatus.Exist);
+            FSWatcher pathObject = new FSWatcher(path, PathType.Folder, PathStatus.Exist);
             _pathListBox.Add(pathObject);
         }
 

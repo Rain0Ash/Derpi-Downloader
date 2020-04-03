@@ -47,7 +47,7 @@ namespace Derpi_Downloader.Download
 
         private DerpiImage _firstPage;
 
-        public delegate void SearchHandler(Search search);
+        public delegate void SearchHandler(Image image);
 
         public event SearchHandler ImageDownloaded;
 
@@ -72,7 +72,7 @@ namespace Derpi_Downloader.Download
                 return;
             }
 
-            ImagesPerPage = _firstPage.search.Count;
+            ImagesPerPage = _firstPage.images.Count;
             MaximumImages = _firstPage.total;
             Pages = (Int32) Math.Ceiling((Single) MaximumImages / ImagesPerPage);
 
@@ -154,22 +154,22 @@ namespace Derpi_Downloader.Download
                     continue;
                 }
 
-                for (Int32 index = 0; index < derpiPage.search.Count; index++)
+                for (Int32 index = 0; index < derpiPage.images.Count; index++)
                 {
                     if (IsInvalid || _token.IsCancellationRequested)
                     {
                         return;
                     }
 
-                    Search search = derpiPage.search[index];
+                    Image image = derpiPage.images[index];
 
-                    while (search?.duplicate_of != null)
+                    while (image?.duplicate_of != null)
                     {
                         Log.Add(new LogMessage("Image id:{0} duplicate of id:{1}", MessageType.Warning,
-                            new[] {search.id.ToString(), search.duplicate_of.ToString()}));
+                            new[] {image.id.ToString(), image.duplicate_of.ToString()}));
                         try
                         {
-                            search = (await JsonAPI.GetDerpiImageAsync($"id:{search.duplicate_of}", token: _token).ConfigureAwait(true)).search[0];
+                            image = (await JsonAPI.GetDerpiImageAsync($"id:{image.duplicate_of}", token: _token).ConfigureAwait(true)).images[0];
                         }
                         catch (IndexOutOfRangeException)
                         {
@@ -177,12 +177,12 @@ namespace Derpi_Downloader.Download
                         }
                     }
 
-                    if (search == null)
+                    if (image == null)
                     {
                         continue;
                     }
 
-                    tasks[index] = DownloadImageAsync(search);
+                    tasks[index] = DownloadImageAsync(image);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(true);
@@ -238,7 +238,7 @@ namespace Derpi_Downloader.Download
                             {
                                 //ignored
                             }
-
+                            
                             return derpiImage;
                         }
                     }
@@ -271,7 +271,7 @@ namespace Derpi_Downloader.Download
             }
         }
 
-        private async Task<Byte[]> GetImageAsync(Search search)
+        private async Task<Byte[]> GetImageAsync(Image image)
         {
             try
             {
@@ -301,16 +301,16 @@ namespace Derpi_Downloader.Download
                         };
 
                         Task<Byte[]> imageTask = client.DownloadDataTaskAsync(
-                            $"https:{(String.IsNullOrEmpty(search.representations.full) ? search.image : search.representations.full)}",
+                            $"{(String.IsNullOrEmpty(image.representations.full) ? image.view_url : image.representations.full)}",
                             token);
 
                         try
                         {
                             if (await Task.WhenAny(imageTask, Task.Delay(waitDelay, token)).ConfigureAwait(true) == imageTask)
                             {
-                                Byte[] image = await imageTask.ConfigureAwait(true);
+                                Byte[] imageByte = await imageTask.ConfigureAwait(true);
 
-                                if (CheckImageHash(search, image, out String hash))
+                                if (CheckImageHash(image, imageByte, out String hash))
                                 {
                                     try
                                     {
@@ -321,13 +321,13 @@ namespace Derpi_Downloader.Download
                                         //ignored
                                     }
 
-                                    return image;
+                                    return imageByte;
                                 }
 
                                 Log.Add(new LogMessage(
                                     Globals.Localization.InvalidImageHashError,
                                     MessageType.Warning,
-                                    new[] {search.name, search.sha512_hash, hash}));
+                                    new[] {image.name, image.sha512_hash, hash}));
                                 source.Cancel();
                                 try
                                 {
@@ -365,13 +365,13 @@ namespace Derpi_Downloader.Download
                         continue;
                     }
 
-                    Log.Add(new LogMessage(Globals.Localization.ImageWaitToLongRetry, MessageType.Warning, new[] {search.id.ToString()}));
+                    Log.Add(new LogMessage(Globals.Localization.ImageWaitToLongRetry, MessageType.Warning, new[] {image.id.ToString()}));
 
                     source.Cancel();
                     count++;
                 } while (count < maximumCounts);
 
-                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {search.id.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {image.id.ToString()}));
                 return null;
             }
             catch (OperationCanceledException)
@@ -380,14 +380,14 @@ namespace Derpi_Downloader.Download
             }
             catch (Exception)
             {
-                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {search.id.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.GetImageError, MessageType.CriticalWarning, new[] {image.id.ToString()}));
                 return null;
             }
         }
 
-        private static Boolean CheckImageHash(Search search, Byte[] image, out String hash)
+        private static Boolean CheckImageHash(Image image, Byte[] imageByte, out String hash)
         {
-            return CheckImageHash(image, search.sha512_hash, search.orig_sha512_hash, out hash);
+            return CheckImageHash(imageByte, image.sha512_hash, image.orig_sha512_hash, out hash);
         }
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
@@ -406,17 +406,17 @@ namespace Derpi_Downloader.Download
 #endif
         }
 
-        private String GetFormatedFilePath(Search search)
+        private String GetFormatedFilePath(Image image)
         {
-            return FormatedField.Format(search, _savePath);
+            return FormatedField.Format(image, _savePath);
         }
 
-        private String GetFormatedDirectoryPath(Search search)
+        private String GetFormatedDirectoryPath(Image image)
         {
-            return FormatedField.Format(search, _saveDirectory);
+            return FormatedField.Format(image, _saveDirectory);
         }
 
-        private async Task DownloadImageAsync(Search search)
+        private async Task DownloadImageAsync(Image image)
         {
             try
             {
@@ -430,39 +430,39 @@ namespace Derpi_Downloader.Download
                 String formatedSavePath = null;
                 if (SaveToDisk)
                 {
-                    formatedSavePath = GetFormatedFilePath(search);
+                    formatedSavePath = GetFormatedFilePath(image);
 
                     if (String.IsNullOrEmpty(formatedSavePath))
                     {
                         Log.Add(new LogMessage(Globals.Localization.FormatFileNameError,
-                            MessageType.Warning, new[] {search.id.ToString()}));
-                        ImageDownloaded?.Invoke(search);
-                        ImageSaved?.Invoke(search);
+                            MessageType.Warning, new[] {image.id.ToString()}));
+                        ImageDownloaded?.Invoke(image);
+                        ImageSaved?.Invoke(image);
                         return;
                     }
 
                     if (File.Exists(formatedSavePath) && !Globals.ExistFileRewrite.GetValue())
                     {
-                        ImageDownloaded?.Invoke(search);
-                        ImageSaved?.Invoke(search);
+                        ImageDownloaded?.Invoke(image);
+                        ImageSaved?.Invoke(image);
                         return;
                     }
                 }
 
-                Byte[] image = await GetImageAsync(search).ConfigureAwait(true);
+                Byte[] imageByte = await GetImageAsync(image).ConfigureAwait(true);
 
-                if (_token.IsCancellationRequested || image == null)
+                if (_token.IsCancellationRequested || imageByte == null)
                 {
                     return;
                 }
 
-                ImageDownloaded?.Invoke(search);
+                ImageDownloaded?.Invoke(image);
 
                 if (SaveToDisk)
                 {
                     try
                     {
-                        await SaveImageAsync(search, image, formatedSavePath).ConfigureAwait(true);
+                        await SaveImageAsync(image, imageByte, formatedSavePath).ConfigureAwait(true);
                     }
                     catch (Exception e)
                     {

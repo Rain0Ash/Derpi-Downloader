@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Common_Library.Logger;
-using Derpi_Downloader.API;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Forms

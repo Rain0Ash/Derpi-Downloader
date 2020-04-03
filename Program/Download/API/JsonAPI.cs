@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Common_Library;
 using Common_Library.Utils.Network;
 using Derpi_Downloader.API;
@@ -44,7 +45,9 @@ namespace Derpi_Downloader.Json
                     Proxy = Globals.WebProxy
                 };
 
-                return await client.DownloadStringTaskAsync(apiRequest, token).ConfigureAwait(true);
+                String json = await client.DownloadStringTaskAsync(apiRequest, token).ConfigureAwait(true);
+                
+                return json;
             }
             catch (WebException ex)
             {

@@ -9,8 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common_Library;
 using Common_Library.LongPath;
-using Common_Library.Types.Other;
 using Common_Library.Utils;
+using Common_Library.Watchers;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
 {
@@ -22,12 +22,12 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         public Int32 FilesForAnalyzeFound { get; }
         public Int32 CurrentFilesAnalyzed { get; private set; }
 
-        private readonly IEnumerable<PathObject> _includedPaths;
+        private readonly IEnumerable<FSWatcher> _includedPaths;
         private readonly Dictionary<String, String> _regexDictionary;
 
         private readonly IEnumerable<String> _files;
 
-        public AuthorsList(IEnumerable<PathObject> includedPaths, IEnumerable<PathObject> excludedPaths = null,
+        public AuthorsList(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths = null,
             Dictionary<String, String> regexDictionary = null)
         {
             includedPaths = includedPaths?.ToArray();
@@ -50,7 +50,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
             _regexDictionary = regexDictionary;
 
-            _files = AdditionalsAPI.GetFiles(_includedPaths, excludedPaths?.ToList() ?? new List<PathObject>())
+            _files = AdditionalsAPI.GetFiles(_includedPaths, excludedPaths?.ToList() ?? new List<FSWatcher>())
                 .Where(file => AdditionalsAPI.AllowedExtensions.Contains(file.Extension?.ToUpper()))
                 .Select(file => Path.GetFileNameWithoutExtension(file.Name));
 
@@ -66,8 +66,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 return new String[0];
             }
 
-            //speed solution => file => Task.Run(() => AnalyzeFileAsync(file));
-            Task<String[]>[] tasks = _files.Select(AnalyzeFileAsync).ToArray();
+            Task<String[]>[] tasks = _files.Select(file => Task.Run(() => AnalyzeFileAsync(file))).ToArray();
 
             await Task.WhenAll(tasks).ConfigureAwait(true);
 
@@ -76,14 +75,13 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 .SelectMany(result => result)
                 .Except(new[] {null, String.Empty})
                 .ToHashSet()
+                .Sort()
                 .ToList();
-
-            artists.Sort();
 
             return artists;
         }
 
-        private async Task<String[]> AnalyzeFileAsync(String file)
+        private String[] AnalyzeFileAsync(String file)
         {
             try
             {

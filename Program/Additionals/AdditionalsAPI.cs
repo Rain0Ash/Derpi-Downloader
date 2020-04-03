@@ -4,8 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Common_Library.LongPath;
-using Common_Library.Types.Other;
+using Common_Library.Utils;
+using Common_Library.Utils.IO;
+using Common_Library.Watchers;
 
 namespace Derpi_Downloader.Additionals
 {
@@ -18,15 +21,15 @@ namespace Derpi_Downloader.Additionals
             ".SVG",
             ".ZIP", ".RAR", ".7Z", ".7ZIP",
             ".SWF",
-            ".MPEG"
+            ".MP4", ".MPEG"
         };
 
-        public static IEnumerable<FileInfo> GetFiles(IEnumerable<PathObject> includedPaths, IEnumerable<PathObject> excludedPaths)
+        public static IEnumerable<FileInfo> GetFiles(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths)
         {
             HashSet<String> includedFolders = new HashSet<String>();
             HashSet<String> excludedFolders = new HashSet<String>();
 
-            foreach (PathObject path in includedPaths)
+            foreach (FSWatcher path in includedPaths)
             {
                 if (!path.IsExistAsFolder())
                 {
@@ -35,7 +38,7 @@ namespace Derpi_Downloader.Additionals
 
                 if (path.Recursive)
                 {
-                    includedFolders.UnionWith(path.GetFolders(System.IO.SearchOption.AllDirectories));
+                    includedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
                 }
                 else
                 {
@@ -43,7 +46,7 @@ namespace Derpi_Downloader.Additionals
                 }
             }
 
-            foreach (PathObject path in excludedPaths)
+            foreach (FSWatcher path in excludedPaths)
             {
                 if (!path.IsExistAsFolder())
                 {
@@ -52,7 +55,7 @@ namespace Derpi_Downloader.Additionals
 
                 if (path.Recursive)
                 {
-                    excludedFolders.UnionWith(path.GetFolders(System.IO.SearchOption.AllDirectories));
+                    excludedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
                 }
                 else
                 {
@@ -62,8 +65,8 @@ namespace Derpi_Downloader.Additionals
 
             IEnumerable<FileInfo> files = includedFolders
                 .Except(excludedFolders)
-                .Select(folder => new DirectoryInfo(folder).EnumerateFiles())
-                .SelectMany(file => file);
+                .Select(folder => DirectoryUtils.GetFiles(folder, false).Select(file => new FileInfo(file)))
+                .SelectMany(info => info);
 
             return files;
         }

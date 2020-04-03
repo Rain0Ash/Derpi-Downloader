@@ -315,7 +315,7 @@ namespace Derpi_Downloader.Localization
                 "Neuer download");
 
             SearchQueryLabel = new CultureStrings(
-                "Search query",
+                "Image query",
                 "Поисковый запрос",
                 "Suchanfrage");
 
@@ -454,7 +454,7 @@ namespace Derpi_Downloader.Localization
                 "Дополнительные функции");
 
             DuplicateSearchButton = new CultureStrings(
-                "Duplicate search",
+                "Duplicate images",
                 "Поиск повторений");
 
             MakeAuthorsListButton = new CultureStrings(
@@ -466,7 +466,7 @@ namespace Derpi_Downloader.Localization
                 "Создание списка авторов из скачанных изображений");
 
             DuplicateSearchButtonToolTip = new CultureStrings(
-                "Search duplicate files in folder by mask",
+                "Image duplicate files in folder by mask",
                 "Поиск дублирующихся файлов по маске");
 
             AuthorListCreating = new CultureStrings(
@@ -779,7 +779,7 @@ namespace Derpi_Downloader.Localization
                 "Download abgeschlossen");
 
             _downloadForSearch = new CultureStrings(
-                "Download for search: {0}",
+                "Download for images: {0}",
                 "Загрузка для поискового запроса {0}",
                 "Download zur Suche: {0}");
 

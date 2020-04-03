@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Common_Library.Utils;
 using Derpi_Downloader.Settings;
 using Derpi_Downloader.Json;
@@ -15,7 +16,7 @@ namespace Derpi_Downloader.API
     public static class DerpiAPI
     {
         public const String SiteRegexPart = @"(((http(s)?:\/\/)|(www\.))?derpibooru\.org\/)";
-        public const String SearchWordRegexPart = @"((\d+|search)\?q=)";
+        public const String SearchWordRegexPart = @"((\d+|images)\?q=)";
         public const String SearchSiteRegexPart = @"(" + SiteRegexPart + "?" + SearchWordRegexPart + ")?";
         public const String SearchRegexPart = @"(((\w|\+|\%|\-|_)+:)?(\w|\*|\+|\%|\-|\ |_|\.|\(|\)|\\|\/|\@|\')+,?)+";
         public const String ParametersRegexPart = @"((&\w+=\w+)+)?";
@@ -72,12 +73,12 @@ namespace Derpi_Downloader.API
 
         public static String CastToAPIMyWatchedRequest(Int32 page = 1, String apiKey = null)
         {
-            return $"{ProgramLocalization.DerpiBooruLink}/images/watched.json?key={apiKey ?? Globals.APIKey.GetValue()}&page={page}";
+            return $"{ProgramLocalization.DerpiBooruLink}/api/v1/json/search/images?q=my:watched&page={page}&key={apiKey ?? Globals.APIKey.GetValue()}";
         }
 
         public static String CastToAPISearch(String search, Int32 page = 1, String apiKey = null)
         {
-            return $"{ProgramLocalization.DerpiBooruLink}/search.json?q={search}&key={apiKey ?? Globals.APIKey.GetValue()}&page={page}";
+            return $"{ProgramLocalization.DerpiBooruLink}/api/v1/json/search/images?q={search}&page={page}&key={apiKey ?? Globals.APIKey.GetValue()}";
         }
 
         public const Int32 LengthAPI = 20;

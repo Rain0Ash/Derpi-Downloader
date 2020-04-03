@@ -11,7 +11,6 @@ using Common_Library.GUI.WinForms.ToolTips;
 using Common_Library.Images;
 using Common_Library.Utils;
 using Common_Library.Utils.IO;
-using Derpi_Downloader.API;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
 
@@ -104,7 +103,7 @@ namespace Derpi_Downloader.Forms
             _downloadPathTextBox.Text = Globals.CurrentDownloadFolder.GetValue();
             _downloadPathTextBox.PathTypeChangeButtonEnabled = false;
             _downloadPathTextBox.TextBox.EnableUniquenessFormatingParts = false;
-            _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Search));
+            _downloadPathTextBox.UpdateAvailableFormatingParts(typeof(Json.Image));
             _downloadPathTextBox.TextChanged += (sender, args) => OnDownloadPath_TextChanged_PathCheck();
             _downloadPathTextBox.TextBox.LostFocus += (sender, args) => OnLostFocusPathCheck();
             _downloadPathTextBox.PathBeenSelected += str => _downloadPathTextBox.Text = str;
@@ -119,7 +118,7 @@ namespace Derpi_Downloader.Forms
             _downloadNameTextBox.Text = Globals.CurrentDownloadFileName.GetValue();
             _downloadNameTextBox.PathTypeChangeButtonEnabled = false;
             _downloadNameTextBox.PathDialogButtonEnabled = false;
-            _downloadNameTextBox.UpdateAvailableFormatingParts(typeof(Search));
+            _downloadNameTextBox.UpdateAvailableFormatingParts(typeof(Json.Image));
             _downloadNameTextBox.TextChanged += (sender, args) => OnDownloadName_TextChanged_PathCheck();
             _downloadNameTextBox.LostFocus += (sender, args) => OnLostFocusNameCheck();
 

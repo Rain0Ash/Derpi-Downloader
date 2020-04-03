@@ -15,7 +15,7 @@ namespace Derpi_Downloader.Download
     {
         public event SearchHandler ImageSaved;
 
-        private async Task SaveImageAsync(Search search, Byte[] image, String formatedSavePath = null)
+        private async Task SaveImageAsync(Image image, Byte[] imageByte, String formatedSavePath = null)
         {
             if (IsInvalid)
             {
@@ -24,11 +24,11 @@ namespace Derpi_Downloader.Download
 
             await WaitAsync(_token).ConfigureAwait(true);
 
-            String formatedDirectoryPath = GetFormatedDirectoryPath(search);
+            String formatedDirectoryPath = GetFormatedDirectoryPath(image);
 
             if (String.IsNullOrEmpty(formatedDirectoryPath))
             {
-                Log.Add(new LogMessage(Globals.Localization.FormatDirectoryError, MessageType.Warning, new[] {search.id.ToString()}));
+                Log.Add(new LogMessage(Globals.Localization.FormatDirectoryError, MessageType.Warning, new[] {image.id.ToString()}));
                 return;
             }
 
@@ -48,20 +48,20 @@ namespace Derpi_Downloader.Download
             {
                 if (String.IsNullOrEmpty(formatedSavePath))
                 {
-                    formatedSavePath = GetFormatedFilePath(search);
+                    formatedSavePath = GetFormatedFilePath(image);
                     if (String.IsNullOrEmpty(formatedSavePath))
                     {
                         Log.Add(new LogMessage(Globals.Localization.FormatFileNameError,
-                            MessageType.Warning, new[] {search.id.ToString()}));
+                            MessageType.Warning, new[] {image.id.ToString()}));
                         return;
                     }
                 }
 
                 await using FileStream sourceStream = new FileStream(formatedSavePath, FileMode.Create, FileAccess.Write, FileShare.None);
 
-                await sourceStream.WriteAsync(image, 0, image.Length, _token).ConfigureAwait(true);
+                await sourceStream.WriteAsync(imageByte, 0, imageByte.Length, _token).ConfigureAwait(true);
 
-                ImageSaved?.Invoke(search);
+                ImageSaved?.Invoke(image);
             }
             catch (UnauthorizedAccessException)
             {
@@ -70,7 +70,7 @@ namespace Derpi_Downloader.Download
             }
             catch (Exception e)
             {
-                Log.Add(new LogMessage($"{search.file_name} error {e.Message}", MessageType.Error));
+                Log.Add(new LogMessage($"{image.name} error {e.Message}", MessageType.Error));
             }
         }
     }

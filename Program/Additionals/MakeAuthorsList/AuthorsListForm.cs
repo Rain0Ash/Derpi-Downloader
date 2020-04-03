@@ -5,9 +5,9 @@ using System;
 using System.Linq;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Logger;
-using Common_Library.Types.Other;
 using Common_Library.Utils;
 using Common_Library.Utils.IO;
+using Common_Library.Watchers;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
 {
@@ -26,7 +26,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 return;
             }
 
-            PathObject pathObject = new PathObject(path, PathType.Folder, PathStatus.Exist) {Recursive = true};
+            FSWatcher pathObject = new FSWatcher(path, PathType.Folder, PathStatus.Exist) {Recursive = true};
             _includePathListBox.ListBox.Add(pathObject);
         }
 
@@ -49,8 +49,8 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         {
             _startButton.Enabled = false;
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCreating, MessageType.Good));
-            using AuthorsList authorsList = new AuthorsList(_includePathListBox.ListBox.Items.OfType<PathObject>(),
-                _excludePathListBox.ListBox.Items.OfType<PathObject>());
+            using AuthorsList authorsList = new AuthorsList(_includePathListBox.ListBox.Items.OfType<FSWatcher>(),
+                _excludePathListBox.ListBox.Items.OfType<FSWatcher>());
 
             if (authorsList.FilesForAnalyzeFound <= 0)
             {

@@ -11,7 +11,6 @@ using Common_Library.GUI.WinForms.RichTextBoxes;
 using Common_Library.GUI.WinForms.ToolTips;
 using Derpi_Downloader.Settings;
 using Derpi_Downloader.Json;
-using Derpi_Downloader.API;
 using Common_Library.Images;
 using Derpi_Downloader.Resources;
 

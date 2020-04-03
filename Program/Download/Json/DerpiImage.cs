@@ -42,10 +42,26 @@ namespace Derpi_Downloader.Json
         [JsonProperty]
         public String full { get; set; }
     }
+    
+    public class Intensities
+    {
+        [JsonProperty]
+        public Double ne { get; set; }
+        
+        [JsonProperty]
+        public Double nw { get; set; }
+        
+        [JsonProperty]
+        public Double se { get; set; }
+        
+        [JsonProperty]
+        public Double sw { get; set; }
+    }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    public class Search
+    public class Image
     {
+        private const String UploaderNeeded = "uploader needed";
         private const String ArtistNeeded = "artist needed";
 
         [JsonProperty(Order = -2)]
@@ -70,9 +86,6 @@ namespace Derpi_Downloader.Json
 
         [JsonProperty]
         public DateTime first_seen_at { get; set; }
-
-        [JsonIgnore]
-        public String[] tags_array { get; set; }
 
         [JsonIgnore]
         public String[] artists_array { get; set; }
@@ -118,11 +131,11 @@ namespace Derpi_Downloader.Json
         }
 
         [JsonIgnore]
-        private String _tags { get; set; }
-
+        private String[] _tags { get; set; }
+        
         [JsonProperty(Order = -2)]
         [FormatedField]
-        public String tags
+        public String[] tags
         {
             get
             {
@@ -136,8 +149,7 @@ namespace Derpi_Downloader.Json
                 }
 
                 _tags = value;
-                tags_array = _tags.Split(new[] {", "}, StringSplitOptions.RemoveEmptyEntries);
-                artists_array = tags_array.Where(tag => Regex.IsMatch(tag, @"^artist:(\w|\-|\ )+$"))
+                artists_array = _tags.Where(tag => Regex.IsMatch(tag, @"^artist:(\w|\-|\ )+$"))
                     .Select(tag => tag.Replace("artist:", String.Empty))
                     .ToArray();
             }
@@ -181,36 +193,57 @@ namespace Derpi_Downloader.Json
         [FormatedField(new[] {"tags_count"})]
         public Int32 tag_count { get; set; }
 
-        [FormatedField(uniqueness: true)]
-        public String name { get; set; }
+        [FormatedField(new []{"name", "image_name"} , true)]
+        public String image_name {
+            get
+            {
+                return Regex.Replace(view_url, "^.*\\/|\\..+$", String.Empty);
+            }
+        }
 
         [JsonProperty]
-        public String file_name { get; set; }
+        public String name { get; set; }
 
         [JsonProperty]
         public String description { get; set; }
 
+        [JsonIgnore]
+        private String _uploader;
+        
         [JsonProperty(Order = -2)]
         [FormatedField]
-        public String uploader { get; set; }
-
-        [JsonIgnore] private String _image;
-
-        [JsonProperty]
-        public String image
-        {
+        public String uploader {
             get
             {
-                return _image;
+                return _uploader ?? UploaderNeeded;
             }
             set
             {
-                _image = value;
-                String validName = PathUtils.RemoveIllegalChars(Regex.Replace(image, @"(.*\/|\..+)", String.Empty));
+                _uploader = value;
+            }
+        }
+
+        [JsonIgnore]
+        private String _view_url;
+
+        [JsonProperty(Order = -1)]
+        public String view_url
+        {
+            get
+            {
+                return _view_url;
+            }
+            set
+            {
+                _view_url = value;
+                String validName = PathUtils.RemoveIllegalChars(Regex.Replace(view_url, @"(.*\/|\..+)", String.Empty));
                 name = String.IsNullOrEmpty(validName) ? id.ToString() : validName;
             }
         }
 
+        [JsonProperty]
+        public String deletion_reason { get; set; }
+        
         [JsonProperty]
         public Int32 upvotes { get; set; }
 
@@ -224,15 +257,15 @@ namespace Derpi_Downloader.Json
         [FormatedField(new[] {"ratio"})]
         public Double aspect_ratio { get; set; }
 
-        [JsonIgnore] private String _original_format;
+        [JsonIgnore] private String _format;
 
         [JsonProperty]
         [FormatedField(new[] {"ext", "extension"})]
-        public String original_format
+        public String format
         {
             get
             {
-                return _original_format;
+                return _format;
             }
             set
             {
@@ -240,9 +273,12 @@ namespace Derpi_Downloader.Json
                 const String svg = "svg";
                 String val = String.IsNullOrEmpty(value) ? png : value;
 
-                _original_format = (val.Equals(svg, StringComparison.OrdinalIgnoreCase) == false ? val : png).ToLower();
+                _format = (val.Equals(svg, StringComparison.OrdinalIgnoreCase) == false ? val : png).ToLower();
             }
         }
+        
+        [JsonProperty]
+        public Boolean hidden_from_users { get; set; }
 
         [JsonProperty]
         public String mime_type { get; set; }
@@ -292,6 +328,9 @@ namespace Derpi_Downloader.Json
         public String source_url { get; set; }
 
         [JsonProperty]
+        public Intensities intensities { get; set; }
+        
+        [JsonProperty]
         public Representations representations { get; set; }
 
         [JsonProperty]
@@ -309,12 +348,12 @@ namespace Derpi_Downloader.Json
     public class DerpiImage
     {
         [JsonProperty]
-        public List<Search> search { get; set; }
-
-        [JsonProperty]
-        public Int32 total { get; set; }
+        public List<Image> images { get; set; }
 
         [JsonProperty]
         public List<Object> interactions { get; set; }
+        
+        [JsonProperty]
+        public Int32 total { get; set; }
     }
 }

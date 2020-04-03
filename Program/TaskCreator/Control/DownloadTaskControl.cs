@@ -10,7 +10,6 @@ using Common_Library.Images;
 using Common_Library.Localization;
 using Common_Library.Logger;
 using Common_Library.Utils.IO;
-using Derpi_Downloader.API;
 using Derpi_Downloader.Download;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
@@ -183,7 +182,7 @@ namespace Derpi_Downloader.Forms
             UpdateText();
         }
 
-        private void OnTaskCompleted(EventQueueList<Search> images, EventQueueList<LogMessage> log)
+        private void OnTaskCompleted(EventQueueList<Json.Image> images, EventQueueList<LogMessage> log)
         {
             Globals.Logger.Log(new LogMessage(Globals.Localization.DownloadForSearchCompleted, MessageType.Good, new[] {Task.SearchQuery}));
             Log(new LogMessage(Globals.Localization.DownloadCompleted, MessageType.Good));
@@ -269,7 +268,7 @@ namespace Derpi_Downloader.Forms
             UpdateText();
         }
 
-        private void OnImageSaved(Search search)
+        private void OnImageSaved(Json.Image image)
         {
             _downloadProgressBar.PerformStep();
             _downloadValueLabel.PerformStep();

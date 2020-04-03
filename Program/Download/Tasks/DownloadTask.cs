@@ -18,7 +18,7 @@ using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.Download
 {
-    public partial class DownloadTask : IPauseable, IDisposable
+    public partial class DownloadTask : IPausable, IDisposable
     {
         private Boolean _isPaused;
 
@@ -95,10 +95,10 @@ namespace Derpi_Downloader.Download
             }
         }
 
-        public EventQueueList<Search> Images { get; } = new EventQueueList<Search>();
+        public EventQueueList<Image> Images { get; } = new EventQueueList<Image>();
         public EventQueueList<LogMessage> Log { get; } = new EventQueueList<LogMessage>();
 
-        public delegate void DownloadTaskHandler(EventQueueList<Search> images, EventQueueList<LogMessage> log);
+        public delegate void DownloadTaskHandler(EventQueueList<Image> images, EventQueueList<LogMessage> log);
 
         private Boolean _isInvalid;
 
@@ -217,7 +217,7 @@ namespace Derpi_Downloader.Download
                 /*
                     lock (Images)
                     {
-                        Images.Add(search);
+                        Images.Add(images);
                     }
                 */
                 Interlocked.Increment(ref _downloadedImages);

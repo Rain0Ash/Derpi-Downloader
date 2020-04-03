@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Derpi_Downloader.API;
 using Derpi_Downloader.Settings;
 
 namespace Derpi_Downloader.Forms
@@ -43,7 +42,7 @@ namespace Derpi_Downloader.Forms
         private static Boolean TaskRemovable(DownloadTaskControl task)
         {
             return task.Task?.IsCompleted == true && task.IsFullDownload ||
-                task.Task?.IsStarted != true && task.EmptySearchRequest && task.DownloadPathIsDefault;
+                task.Task?.IsStarted != true && task.EmptySearchRequest;
         }
 
         public Boolean HasDownload
