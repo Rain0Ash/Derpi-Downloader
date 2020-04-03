@@ -59,7 +59,7 @@ namespace Derpi_Downloader.Forms
 
         private void OnForm_Closing(Object sender, FormClosingEventArgs e)
         {
-            if (ContainsFocus && e.CloseReason == CloseReason.UserClosing && _downloadControl.HasDownload &&
+            if (ContainsFocus && e.CloseReason == CloseReason.UserClosing && !Globals.ForceClose.GetValue() && _downloadControl.HasDownload &&
                 new MessageForm("Остались незавершенные загрузки\nВы действительно хотите закрыть программу?", "Закрыть программу?",
                     Resources.Resource.icon.ToBitmap(), Resources.Resource.icon.ToBitmap(), MessageBoxButtons.YesNo, new []{Globals.Localization.Yes, Globals.Localization.No}).Show() != DialogResult.Yes)
             {

@@ -18,33 +18,11 @@ namespace Derpi_Downloader.Forms
 {
     public sealed partial class SettingsForm
     {
-        private readonly IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(Boolean disposing)
-        {
-            if (disposing)
-            {
-                components?.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
+            _saveSettingsButton = new Button();
             _resetSettings = new Button();
             _resetAllSettings = new Button();
-            _saveSettingsButton = new Button();
             _apiControl = new APIControl();
             _toolTip = new HelpToolTip();
             _downloadPathLabel = new Label();
@@ -56,7 +34,9 @@ namespace Derpi_Downloader.Forms
             _proxyButton = new Button();
             _existFileRewriteCheckBox = new CheckBox();
             _queueAutoDownloadCheckBox = new CheckBox();
+            _forceCloseCheckBox = new CheckBox();
             _convertSVGToPNGCheckBox = new CheckBox();
+            _notStrictAPICheckCheckBox = new CheckBox();
             _pathLabel = new AdditionalsLabel();
             _proxyForm = new ProxyForm();
             SuspendLayout();
@@ -72,25 +52,25 @@ namespace Derpi_Downloader.Forms
             _proxyButton.Image = new Bitmap(Images.Others.Proxy, new Size(24, 24));
             _proxyButton.Click += (sender, args) => _proxyForm.ShowDialog();
 
-            _resetSettings.Location = new Point(370, 205);
+            _saveSettingsButton.Location = new Point(5, 225);
+            _saveSettingsButton.Size = new Size(365, 40);
+            _saveSettingsButton.UseVisualStyleBackColor = true;
+            _saveSettingsButton.Enabled = Globals.APIKey.IsValid;
+            Globals.APIKey.Changed += () => _saveSettingsButton.Enabled = Globals.APIKey.IsValid;
+            _saveSettingsButton.Click += (sender, args) => Save();
+            
+            _resetSettings.Location = new Point(_saveSettingsButton.Location.X + _saveSettingsButton.Size.Width, _saveSettingsButton.Location.Y);
             _resetSettings.Size = new Size(40, 40);
             _resetSettings.Image = new Bitmap(Images.Line.ResetGear, new Size(24, 24));
             _resetSettings.UseVisualStyleBackColor = true;
             _resetSettings.Click += (sender, args) => OnResetSettingsButtonClick(out _);
 
-            _resetAllSettings.Location = new Point(410, 205);
-            _resetAllSettings.Size = new Size(40, 40);
+            _resetAllSettings.Location = new Point(_resetSettings.Location.X + _resetSettings.Size.Width, _saveSettingsButton.Location.Y);
+            _resetAllSettings.Size = _resetSettings.Size;
             _resetAllSettings.Image = new Bitmap(Images.Fill.ResetGear, new Size(24, 24));
             _resetAllSettings.UseVisualStyleBackColor = true;
             _resetAllSettings.Click += (sender, args) => OnResetAllSettingsButtonClick();
-
-            _saveSettingsButton.Location = new Point(5, 205);
-            _saveSettingsButton.Size = new Size(365, 40);
-            _saveSettingsButton.UseVisualStyleBackColor = true;
-            _saveSettingsButton.Enabled = Globals.APIKey.IsValid;
-            Globals.APIKey.Changed += () => _saveSettingsButton.Enabled = Globals.APIKey.IsValid;
-            _saveSettingsButton.Click += (sender, args) => OnSaveSettingsButton_Click();
-
+            
             _apiControl.Location = new Point(130, 0);
             _apiControl.Size = new Size(325, 75);
 
@@ -134,28 +114,38 @@ namespace Derpi_Downloader.Forms
             _existFileRewriteCheckBox.MinimumSize = new Size(0, 20);
             _existFileRewriteCheckBox.AutoSize = true;
             _existFileRewriteCheckBox.Checked = Globals.ExistFileRewrite.GetValue();
-            _existFileRewriteCheckBox.CheckedChanged += OnExistFileRewriteCheckBoxCheckBoxClick;
+            _existFileRewriteCheckBox.CheckedChanged += OnExistFileRewriteCheckBox_Click;
 
             _queueAutoDownloadCheckBox.Location = new Point(5, 180);
             _queueAutoDownloadCheckBox.MinimumSize = new Size(0, 20);
             _queueAutoDownloadCheckBox.AutoSize = true;
             _queueAutoDownloadCheckBox.Checked = Globals.QueueAutoDownload.GetValue();
-            _queueAutoDownloadCheckBox.CheckedChanged += OnQueueAutoDownloadCheckBoxCheckBoxClick;
-
-            _convertSVGToPNGCheckBox.Location = new Point(230, 160);
+            _queueAutoDownloadCheckBox.CheckedChanged += OnQueueAutoDownloadCheckBox_Click;
+            
+            _forceCloseCheckBox.Location = new Point(5, 200);
+            _forceCloseCheckBox.MinimumSize = new Size(0, 20);
+            _forceCloseCheckBox.AutoSize = true;
+            _forceCloseCheckBox.Checked = Globals.ForceClose.GetValue();
+            _forceCloseCheckBox.CheckedChanged += OnForceCloseCheckBox_Click;
+            
+            _convertSVGToPNGCheckBox.Location = new Point(260, 160);
             _convertSVGToPNGCheckBox.MinimumSize = new Size(0, 20);
             _convertSVGToPNGCheckBox.AutoSize = true;
             _convertSVGToPNGCheckBox.Checked = Globals.ConvertSVGToPNG.GetValue();
-            _convertSVGToPNGCheckBox.CheckedChanged += OnConvertSVGToPngCheckBoxCheckBoxClick;
+            _convertSVGToPNGCheckBox.CheckedChanged += OnConvertSVGToPngCheckBox_Click;
             _convertSVGToPNGCheckBox.Enabled = false;
-
-            Globals.ExistFileRewrite.Changed += () => _existFileRewriteCheckBox.Checked = Globals.ExistFileRewrite.GetValue();
+            
+            _notStrictAPICheckCheckBox.Location = new Point(260, 180);
+            _notStrictAPICheckCheckBox.MinimumSize = new Size(0, 20);
+            _notStrictAPICheckCheckBox.AutoSize = true;
+            _notStrictAPICheckCheckBox.Checked = Globals.NotStrictAPICheck.GetValue();
+            _notStrictAPICheckCheckBox.CheckedChanged += OnNotStrictAPICheckCheckBox_Click;
 
             MinimizeBox = false;
             MaximizeBox = false;
             ShowInTaskbar = false;
             AutoScaleDimensions = new SizeF(7F, 15F);
-            ClientSize = new Size(450, 250);
+            ClientSize = new Size(450, 270);
             AutoScaleMode = AutoScaleMode.Font;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Controls.Add(_saveSettingsButton);
@@ -171,29 +161,31 @@ namespace Derpi_Downloader.Forms
             Controls.Add(_downloadNameTextBox);
             Controls.Add(_existFileRewriteCheckBox);
             Controls.Add(_queueAutoDownloadCheckBox);
+            Controls.Add(_forceCloseCheckBox);
             Controls.Add(_convertSVGToPNGCheckBox);
+            Controls.Add(_notStrictAPICheckCheckBox);
             Controls.Add(_pathLabel);
             Icon = ImageUtils.IconFromImage(Images.Line.Settings);
             ResumeLayout();
         }
-
-        #endregion
 
         private Label _languageLabel;
         private LocalizationComboBox _languageImagedComboBox;
         private Button _proxyButton;
         private HelpToolTip _toolTip;
         private APIControl _apiControl;
+        private Button _saveSettingsButton;
         private Button _resetSettings;
         private Button _resetAllSettings;
-        private Button _saveSettingsButton;
         private Label _downloadPathLabel;
         private DerpiAdvancedPathTextBox _downloadPathTextBox;
         private Label _downloadNameLabel;
         private DerpiAdvancedPathTextBox _downloadNameTextBox;
         private CheckBox _existFileRewriteCheckBox;
         private CheckBox _queueAutoDownloadCheckBox;
+        private CheckBox _forceCloseCheckBox;
         private CheckBox _convertSVGToPNGCheckBox;
+        private CheckBox _notStrictAPICheckCheckBox;
         private AdditionalsLabel _pathLabel;
         private ProxyForm _proxyForm;
     }

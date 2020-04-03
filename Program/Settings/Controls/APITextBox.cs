@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using Common_Library.GUI.WinForms.TextBoxes;
 using Derpi_Downloader.API;
+using Derpi_Downloader.Settings;
 
 namespace System.Windows.Forms
 {
@@ -22,7 +23,7 @@ namespace System.Windows.Forms
             {
                 BackColor = Color.White;
             }
-            else if (Regex.IsMatch(Text, $@"^[a-zA-Z0-9]{{1,{DerpiAPI.LengthAPI}}}$"))
+            else if (Globals.NotStrictAPICheck.GetValue() || Regex.IsMatch(Text, $@"^{DerpiAPI.APIAllowedSymbols}{{1,{DerpiAPI.LengthAPI}}}$"))
             {
                 if (Text.Length == DerpiAPI.LengthAPI)
                 {

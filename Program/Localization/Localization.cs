@@ -47,7 +47,9 @@ namespace Derpi_Downloader.Localization
         public CultureStrings SaveSettingsButton;
         public CultureStrings ExistFileRewriteCheckBox;
         public CultureStrings QueueAutoDownloadCheckBox;
+        public CultureStrings ForceCloseCheckBox;
         public CultureStrings ConvertSVGToPNGCheckBox;
+        public CultureStrings NotStrictAPICheckCheckBox;
         public CultureStrings LanguageLabel;
         public CultureStrings DownloadForm;
         public CultureStrings SearchQueryLabel;
@@ -100,6 +102,7 @@ namespace Derpi_Downloader.Localization
         public CultureStrings PathTypeChangeButtonToAbsoluteToolTip;
         public CultureStrings FormatHelpButtonToolTip;
         public CultureStrings ProxyButtonToolTip;
+        public CultureStrings OptionsButtonToolTip;
         public CultureStrings ResetSettingsToolTip;
         public CultureStrings ResetAllSettingsToolTip;
         public CultureStrings CloseDownloadTaskControlToolTip;
@@ -284,6 +287,10 @@ namespace Derpi_Downloader.Localization
             QueueAutoDownloadCheckBox = new CultureStrings(
                 "Auto download from queue",
                 "Автоскачивание из очереди");
+            
+            ForceCloseCheckBox = new CultureStrings(
+                "Force close",
+                "Закрывать принудительно");
 
             ExistFileRewriteCheckBoxToolTip = new CultureStrings(
                 "Pass/overwrite files with matching names",
@@ -298,6 +305,10 @@ namespace Derpi_Downloader.Localization
                 "Convert SVG to PNG",
                 "Конвертировать SVG в PNG",
                 "Konvertieren Sie SVG in PNG");
+            
+            NotStrictAPICheckCheckBox = new CultureStrings(
+                "Not strict API check",
+                "Не строгая проверка API");
 
             ConvertSVGToPNGCheckBoxToolTip = new CultureStrings(
                 "Convert SVG image to PNG and save both",

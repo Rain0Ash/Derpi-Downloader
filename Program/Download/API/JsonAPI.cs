@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -19,12 +20,12 @@ namespace Derpi_Downloader.Json
     {
         public static event Handlers.HttpStatusCodeHandler OnExceptionResponce;
 
-        public static Task<String> GetJsonMyWatchedAsync(String apiKey = null, Int32 page = 1, Boolean isInvoke = true, CancellationToken token = default)
+        public static Task<String> GetJsonMyWatchedAsync(Int32 page = 1, String apiKey = null, Boolean isInvoke = true, CancellationToken token = default)
         {
             return GetJsonAsync(DerpiAPI.CastToAPIMyWatchedRequest(page, apiKey), isInvoke, token);
         }
 
-        public static Task<String> GetJsonForSearchAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true,
+        public static Task<String> GetJsonForSearchAsync([NotNull] String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true,
             CancellationToken token = default)
         {
             return GetJsonAsync(DerpiAPI.CastToAPISearchRequest(search, page, apiKey), isInvoke, token);
@@ -67,7 +68,7 @@ namespace Derpi_Downloader.Json
         public static async Task<DerpiImage> GetDerpiImageAsync(String search, Int32 page = 1, String apiKey = null, Boolean isInvoke = true,
             CancellationToken token = default)
         {
-            String json = await GetJsonForSearchAsync(search, page, apiKey, isInvoke, token).ConfigureAwait(true);
+            String json = search == null ? await GetJsonMyWatchedAsync(page, apiKey, isInvoke, token).ConfigureAwait(true) : await GetJsonForSearchAsync(search, page, apiKey, isInvoke, token).ConfigureAwait(true);
             return json == null ? null : JsonConvert.DeserializeObject<DerpiImage>(json);
         }
     }

@@ -36,7 +36,9 @@ namespace Derpi_Downloader.Settings
         private const String OptionsSection = "Options";
         private const String ExistFileRewriteKey = "Exist file rewrite";
         private const String ConvertSVGToPNGKey = "SVG to PNG";
+        private const String NotStrictAPICheckKey = "Not strict API check";
         private const String QueueAutoDownloadKey = "Queue auto download";
+        private const String ForceCloseKey = "Force close";
         private const String ProxySection = "Proxy";
         private const String ProxyAddressKey = "Proxy address";
         private const String ProxyPortKey = "Proxy port";
@@ -54,15 +56,17 @@ namespace Derpi_Downloader.Settings
                 path => PathUtils.IsValidPath(path, PathType.LocalFile), CryptAction.Crypt, SettingsSection);
 
             LanguageCode = Config.GetProperty(LanguageCodeKey, LocalizationBase.BasicCulture.LCID, SettingsSection);
-            
-            APIKey = Config.GetProperty(APICodeKey, String.Empty, DerpiAPI.CheckAPI, CryptAction.Crypt, null, false, APISection);
 
             ExistFileRewrite = Config.GetProperty(ExistFileRewriteKey, false, OptionsSection);
             
             ConvertSVGToPNG = Config.GetProperty(ConvertSVGToPNGKey, true, OptionsSection);
             
+            NotStrictAPICheck = Config.GetProperty(NotStrictAPICheckKey, false, OptionsSection);
+            
             QueueAutoDownload = Config.GetProperty(QueueAutoDownloadKey, false, OptionsSection);
 
+            ForceClose = Config.GetProperty(ForceCloseKey, false, OptionsSection);
+            
             ProxyAddress = Config.GetProperty(ProxyAddressKey, @"127.0.0.1", NetworkUtils.ValidateIPv4, ProxySection);
             
             ProxyPort = Config.GetProperty(ProxyPortKey, 3128, NetworkUtils.ValidatePort, ProxySection);
@@ -71,6 +75,8 @@ namespace Derpi_Downloader.Settings
             
             ProxyPassword = Config.GetProperty(ProxyPasswordKey, String.Empty, null, CryptAction.Crypt, ProxySection);
 
+            APIKey = Config.GetProperty(APICodeKey, String.Empty, DerpiAPI.CheckAPI, CryptAction.Crypt, null, false, APISection);
+            
             Localization = new ProgramLocalization(LanguageCode.GetValue());
             Logger = new Logger();
             
@@ -82,13 +88,15 @@ namespace Derpi_Downloader.Settings
             }
         }
         
+        public static readonly IConfigProperty<String> APIKey;
         public static readonly IConfigProperty<String> CurrentDownloadFolder;
         public static readonly IConfigProperty<String> CurrentDownloadFileName;
         public static readonly IConfigProperty<Int32> LanguageCode;
-        public static readonly IConfigProperty<String> APIKey;
         public static readonly IConfigProperty<Boolean> ExistFileRewrite;
         public static readonly IConfigProperty<Boolean> ConvertSVGToPNG;
+        public static readonly IConfigProperty<Boolean> NotStrictAPICheck;
         public static readonly IConfigProperty<Boolean> QueueAutoDownload;
+        public static readonly IConfigProperty<Boolean> ForceClose;
         public static readonly IConfigProperty<String> ProxyAddress;
         public static readonly IConfigProperty<Int32> ProxyPort;
         public static readonly IConfigProperty<String> ProxyLogin;

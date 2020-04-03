@@ -82,7 +82,8 @@ namespace Derpi_Downloader.API
         }
 
         public const Int32 LengthAPI = 20;
-        private static readonly String PatternAPI = $@"^[a-zA-Z0-9]{{{LengthAPI}}}$";
+        public const String APIAllowedSymbols = "[a-zA-Z0-9-]";
+        private static readonly String PatternAPI = $@"^{APIAllowedSymbols}{{{LengthAPI}}}$";
 
         public static Boolean CheckAPI()
         {
@@ -91,12 +92,20 @@ namespace Derpi_Downloader.API
 
         public static Boolean CheckAPI(String api)
         {
-            return !String.IsNullOrEmpty(api) && Regex.IsMatch(api, PatternAPI);
+            return !String.IsNullOrEmpty(api) && (Globals.NotStrictAPICheck.GetValue() || Regex.IsMatch(api, PatternAPI));
         }
 
         public static async Task<Boolean> CheckValidAPIAsync(String apiKey)
         {
-            return CheckAPI(apiKey) && await JsonAPI.GetJsonMyWatchedAsync(apiKey, 1, false).ConfigureAwait(true) != null;
+            if (!CheckAPI(apiKey))
+            {
+                return false;
+            }
+
+            DerpiImage search = await JsonAPI.GetDerpiImageAsync(null, 1, apiKey, false).ConfigureAwait(true);
+            
+            return search != null && search.total > 0;
+
         }
     }
 }
