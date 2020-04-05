@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Common_Library;
 using Common_Library.LongPath;
 using Common_Library.Utils;
@@ -14,15 +16,29 @@ using Common_Library.Watchers;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
 {
-    public class AuthorsList : IDisposable
+    public class AuthorsList
     {
         private const String Artist = "artist";
 
-        public event Handlers.EmptyHandler FileAnalyzed;
         public Int32 FilesForAnalyzeFound { get; }
-        public Int32 CurrentFilesAnalyzed { get; private set; }
+
+        private Int32 _currentFilesAnalyzed;
+
+        public Int32 CurrentFilesAnalyzed
+        {
+            get
+            {
+                return _currentFilesAnalyzed;
+            }
+            set
+            {
+                _currentFilesAnalyzed = value;
+            }
+        }
 
         private readonly IEnumerable<FSWatcher> _includedPaths;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly IEnumerable<FSWatcher> _excludedPaths;
         private readonly Dictionary<String, String> _regexDictionary;
 
         private readonly IEnumerable<String> _files;
@@ -39,6 +55,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             }
 
             _includedPaths = includedPaths;
+            _excludedPaths = excludedPaths;
 
             if (regexDictionary?.Keys.Any() != true)
             {
@@ -50,13 +67,9 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
             _regexDictionary = regexDictionary;
 
-            _files = AdditionalsAPI.GetFiles(_includedPaths, excludedPaths?.ToList() ?? new List<FSWatcher>())
-                .Where(file => AdditionalsAPI.AllowedExtensions.Contains(file.Extension?.ToUpper()))
-                .Select(file => Path.GetFileNameWithoutExtension(file.Name));
+            _files = AdditionalsAPI.GetFiles(_includedPaths, _excludedPaths);
 
             FilesForAnalyzeFound = _files.Count();
-
-            FileAnalyzed += () => CurrentFilesAnalyzed++;
         }
 
         public async Task<IEnumerable<String>> GetArtistsSetAsync()
@@ -66,21 +79,23 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 return new String[0];
             }
 
-            Task<String[]>[] tasks = _files.Select(file => Task.Run(() => AnalyzeFileAsync(file))).ToArray();
+            Task<IEnumerable<String>>[] tasks = _files.Chunk(Environment.ProcessorCount).Select(chunk => Task.Run(() => AnalyzeFileAsync(chunk))).ToArray();
 
             await Task.WhenAll(tasks).ConfigureAwait(true);
 
-            List<String> artists = tasks
+            return tasks
                 .Select(task => task.ConfigureAwait(true).GetAwaiter().GetResult())
                 .SelectMany(result => result)
                 .Except(new[] {null, String.Empty})
                 .ToHashSet()
-                .Sort()
-                .ToList();
-
-            return artists;
+                .Sort();
         }
 
+        private IEnumerable<String> AnalyzeFileAsync(IEnumerable<String> files)
+        {
+            return files.SelectMany(AnalyzeFileAsync);
+        }
+        
         private String[] AnalyzeFileAsync(String file)
         {
             try
@@ -93,7 +108,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 {
                     if (pattern == null)
                     {
-                        FileAnalyzed?.Invoke();
+                        Interlocked.Add(ref _currentFilesAnalyzed, 1);
                         return new[] {String.Empty};
                     }
 
@@ -101,11 +116,11 @@ namespace Derpi_Downloader.Additionals.AuthorsList
                 }
                 catch (ArgumentException)
                 {
-                    FileAnalyzed?.Invoke();
+                    Interlocked.Add(ref _currentFilesAnalyzed, 1);
                     return new[] {String.Empty};
                 }
 
-                FileAnalyzed?.Invoke();
+                Interlocked.Add(ref _currentFilesAnalyzed, 1);
 
                 return selectArtistRegex
                     .MatchNamedCaptures(file)
@@ -131,11 +146,6 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             }
 
             return watchArtists.ToString();
-        }
-
-        public void Dispose()
-        {
-            FileAnalyzed = null;
         }
     }
 }

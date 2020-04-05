@@ -14,7 +14,7 @@ using Derpi_Downloader.Download;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.TaskCreator.Forms
 {
     public partial class DownloadTaskControl : LocalizationControl
     {
@@ -74,7 +74,7 @@ namespace Derpi_Downloader.Forms
                                            _downloadPathTextBox.IsValid();
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             if (Disposing || IsDisposed)
             {

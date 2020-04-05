@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>Derpi Downloader</AssemblyName>
         <RootNamespace>Derpi_Downloader</RootNamespace>
         <UseWindowsForms>true</UseWindowsForms>
         <ApplicationIcon>icon.ico</ApplicationIcon>

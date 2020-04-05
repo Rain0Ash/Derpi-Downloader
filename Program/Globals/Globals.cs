@@ -37,6 +37,7 @@ namespace Derpi_Downloader.Settings
         private const String ExistFileRewriteKey = "Exist file rewrite";
         private const String ConvertSVGToPNGKey = "SVG to PNG";
         private const String NotStrictAPICheckKey = "Not strict API check";
+        private const String CheckHashKey = "CheckHash";
         private const String QueueAutoDownloadKey = "Queue auto download";
         private const String ForceCloseKey = "Force close";
         private const String ProxySection = "Proxy";
@@ -63,7 +64,9 @@ namespace Derpi_Downloader.Settings
             
             NotStrictAPICheck = Config.GetProperty(NotStrictAPICheckKey, false, OptionsSection);
             
-            QueueAutoDownload = Config.GetProperty(QueueAutoDownloadKey, false, OptionsSection);
+            CheckHash = Config.GetProperty(CheckHashKey, false, OptionsSection);
+            
+            QueueAutoDownload = Config.GetProperty(QueueAutoDownloadKey, true, OptionsSection);
 
             ForceClose = Config.GetProperty(ForceCloseKey, false, OptionsSection);
             
@@ -95,6 +98,7 @@ namespace Derpi_Downloader.Settings
         public static readonly IConfigProperty<Boolean> ExistFileRewrite;
         public static readonly IConfigProperty<Boolean> ConvertSVGToPNG;
         public static readonly IConfigProperty<Boolean> NotStrictAPICheck;
+        public static readonly IConfigProperty<Boolean> CheckHash;
         public static readonly IConfigProperty<Boolean> QueueAutoDownload;
         public static readonly IConfigProperty<Boolean> ForceClose;
         public static readonly IConfigProperty<String> ProxyAddress;

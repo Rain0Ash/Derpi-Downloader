@@ -34,7 +34,7 @@ namespace Derpi_Downloader.Localization
             }
             private set
             {
-                Localization[RU] = value ?? String.Empty;
+                Localization[RU] = value;
             }
         }
 
@@ -48,7 +48,7 @@ namespace Derpi_Downloader.Localization
             }
             private set
             {
-                Localization[DE] = value ?? String.Empty;
+                Localization[DE] = value;
             }
         }
 

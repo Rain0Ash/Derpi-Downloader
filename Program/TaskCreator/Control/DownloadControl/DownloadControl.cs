@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Derpi_Downloader.Forms;
 using Derpi_Downloader.Settings;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.TaskCreator.Forms
 {
     public partial class DownloadControl : Control
     {

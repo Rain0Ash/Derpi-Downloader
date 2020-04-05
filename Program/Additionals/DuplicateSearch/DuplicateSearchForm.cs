@@ -28,7 +28,7 @@ namespace Derpi_Downloader.Additionals.DuplicateSearch
             _pathListBox.Add(pathObject);
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.DuplicateSearchButtonToolTip;
         }

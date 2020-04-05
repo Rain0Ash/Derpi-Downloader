@@ -2,12 +2,13 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System.Drawing;
+using System.Windows.Forms;
 using Common_Library.GUI.WinForms.TextBoxes;
 using Common_Library.GUI.WinForms.ToolTips;
 using Common_Library.Images;
 using Common_Library.Utils;
 
-namespace System.Windows.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public partial class ProxyForm
     {

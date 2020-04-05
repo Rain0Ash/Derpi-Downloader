@@ -1,13 +1,14 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using Common_Library.GUI.WinForms.TextBoxes;
 using Derpi_Downloader.API;
 using Derpi_Downloader.Settings;
 
-namespace System.Windows.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public class APITextBox : HidenTextBox
     {

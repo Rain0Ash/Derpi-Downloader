@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Common_Library.LongPath;
 using Common_Library.Utils;
@@ -23,8 +24,10 @@ namespace Derpi_Downloader.Additionals
             ".SWF",
             ".MP4", ".MPEG"
         };
+        
+        private static readonly Regex RegexExt = new Regex($"^.*\\.({String.Join("|", AllowedExtensions.Select(ext => ext.Split(".")[1]))})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public static IEnumerable<FileInfo> GetFiles(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths)
+        public static IEnumerable<String> GetFiles(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths)
         {
             HashSet<String> includedFolders = new HashSet<String>();
             HashSet<String> excludedFolders = new HashSet<String>();
@@ -46,29 +49,33 @@ namespace Derpi_Downloader.Additionals
                 }
             }
 
-            foreach (FSWatcher path in excludedPaths)
+            if (excludedPaths != null)
             {
-                if (!path.IsExistAsFolder())
+                foreach (FSWatcher path in excludedPaths)
                 {
-                    continue;
-                }
+                    if (!path.IsExistAsFolder())
+                    {
+                        continue;
+                    }
 
-                if (path.Recursive)
-                {
-                    excludedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
-                }
-                else
-                {
-                    excludedFolders.Add(path.Path);
+                    if (path.Recursive)
+                    {
+                        excludedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
+                    }
+                    else
+                    {
+                        excludedFolders.Add(path.Path);
+                    }
                 }
             }
 
-            IEnumerable<FileInfo> files = includedFolders
-                .Except(excludedFolders)
-                .Select(folder => DirectoryUtils.GetFiles(folder, false).Select(file => new FileInfo(file)))
-                .SelectMany(info => info);
-
-            return files;
+            foreach (String folder in includedFolders.Except(excludedFolders))
+            {
+                foreach (String file in DirectoryUtils.GetFiles(folder, RegexExt))
+                {
+                    yield return Path.GetFileNameWithoutExtension(file);
+                }
+            }
         }
     }
 }

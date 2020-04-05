@@ -4,12 +4,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common_Library.Attributes;
+using Common_Library.Crypto;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Localization;
 using Common_Library.Logger;
@@ -17,6 +19,7 @@ using Common_Library.LongPath;
 using Common_Library.Utils.IO;
 using Common_Library.Utils.Math;
 using Common_Library.Utils.Network;
+using Derpi_Downloader.API;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
 
@@ -106,7 +109,9 @@ namespace Derpi_Downloader.Download
                 return;
             }
 
-            if (SaveToDisk && !DirectoryUtils.TryCreateDirectory(Regex.Replace(_saveDirectory, @"\{[^\{\}]+\}", "test")))
+            // !DirectoryUtils.TryCreateDirectory(Regex.Replace(_saveDirectory, @"\{[^\{\}]+\}", "test"))
+            
+            if (SaveToDisk && !DirectoryUtils.CheckPermissions(_saveDirectory, FileSystemRights.Read | FileSystemRights.Write))
             {
                 Log.Add(new LogMessage(Globals.Localization.CreateDirectoryError, MessageType.CriticalError));
                 IsInvalid = true;
@@ -182,6 +187,8 @@ namespace Derpi_Downloader.Download
                         continue;
                     }
 
+                    ImageDataSupplement(image);
+                    
                     tasks[index] = DownloadImageAsync(image);
                 }
 
@@ -199,6 +206,11 @@ namespace Derpi_Downloader.Download
             }
 
             IsCompleted = true;
+        }
+
+        private void ImageDataSupplement(Image image)
+        {
+            image.query = DerpiAPI.CastSearchRequest(SearchQuery, true);
         }
 
         private async Task<DerpiImage> GetPageAsync(Int32 page)
@@ -310,7 +322,7 @@ namespace Derpi_Downloader.Download
                             {
                                 Byte[] imageByte = await imageTask.ConfigureAwait(true);
 
-                                if (CheckImageHash(image, imageByte, out String hash))
+                                if (!Globals.CheckHash.GetValue() || CheckImageHash(image, imageByte, out String hash))
                                 {
                                     try
                                     {
@@ -327,7 +339,7 @@ namespace Derpi_Downloader.Download
                                 Log.Add(new LogMessage(
                                     Globals.Localization.InvalidImageHashError,
                                     MessageType.Warning,
-                                    new[] {image.name, image.sha512_hash, hash}));
+                                    new[] {image.image_name, image.sha512_hash, hash}));
                                 source.Cancel();
                                 try
                                 {
@@ -393,17 +405,9 @@ namespace Derpi_Downloader.Download
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static Boolean CheckImageHash(Byte[] image, String imageHash, String originalImageHash, out String hash)
         {
-#if HashImage
             hash = Cryptography.Hash.Sha512String(image);
             return hash.Equals(imageHash, StringComparison.OrdinalIgnoreCase) ||
                    hash.Equals(originalImageHash, StringComparison.OrdinalIgnoreCase);
-
-#else
-
-            hash = String.Empty;
-            return true;
-
-#endif
         }
 
         private String GetFormatedFilePath(Image image)

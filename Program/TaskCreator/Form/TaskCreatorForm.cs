@@ -7,7 +7,7 @@ using Common_Library.GUI.WinForms.Forms;
 using Derpi_Downloader.API;
 using Derpi_Downloader.Settings;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.TaskCreator.Forms
 {
     public sealed partial class TaskCreatorForm : ParentForm
     {
@@ -22,7 +22,7 @@ namespace Derpi_Downloader.Forms
             InitializeComponent();
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.DownloadForm;
             _searchQueryLabel.Text = Globals.Localization.SearchQueryLabel;

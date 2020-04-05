@@ -9,9 +9,8 @@ using Common_Library.Images;
 using Common_Library.Localization;
 using Common_Library.LongPath;
 using Common_Library.Utils.IO;
-using Derpi_Downloader.Settings;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public sealed partial class SettingsForm : ParentForm
     {
@@ -27,7 +26,7 @@ namespace Derpi_Downloader.Forms
             OnLostFocusNameCheck();
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.SettingsForm;
             _languageLabel.Text = Globals.Localization.LanguageLabel;
@@ -37,10 +36,12 @@ namespace Derpi_Downloader.Forms
             _forceCloseCheckBox.Text = Globals.Localization.ForceCloseCheckBox;
             _convertSVGToPNGCheckBox.Text = Globals.Localization.ConvertSVGToPNGCheckBox;
             _notStrictAPICheckCheckBox.Text = Globals.Localization.NotStrictAPICheckCheckBox;
+            _checkHashCheckBox.Text = Globals.Localization.CheckHashCheckBox;
             _downloadPathLabel.Text = Globals.Localization.DefaultDownloadPathLabel;
             _downloadNameLabel.Text = Globals.Localization.DefaultDownloadNameLabel;
             _downloadPathTextBox.PathFormatHelpToolTip = Globals.Localization.FormatHelpButtonToolTip;
             _downloadPathTextBox.PathDialogToolTip = Globals.Localization.FolderDialogButtonToolTip;
+            _downloadNameTextBox.PathFormatHelpToolTip = Globals.Localization.FormatHelpButtonToolTip;
             _toolTip.SetToolTip(_existFileRewriteCheckBox, Globals.Localization.ExistFileRewriteCheckBoxToolTip);
             _toolTip.SetToolTip(_queueAutoDownloadCheckBox, Globals.Localization.QueueAutoDownloadCheckBoxToolTip);
             _toolTip.SetToolTip(_convertSVGToPNGCheckBox, Globals.Localization.ConvertSVGToPNGCheckBoxToolTip);
@@ -120,7 +121,7 @@ namespace Derpi_Downloader.Forms
         
         private void OnForceCloseCheckBox_Click(Object sender, EventArgs e)
         {
-            Globals.ForceClose.SetValue(_queueAutoDownloadCheckBox.Checked);
+            Globals.ForceClose.SetValue(_forceCloseCheckBox.Checked);
         }
         
         private void OnConvertSVGToPngCheckBox_Click(Object sender, EventArgs e)
@@ -131,6 +132,11 @@ namespace Derpi_Downloader.Forms
         private void OnNotStrictAPICheckCheckBox_Click(Object sender, EventArgs e)
         {
             Globals.NotStrictAPICheck.SetValue(_notStrictAPICheckCheckBox.Checked);
+        }
+        
+        private void OnCheckHashCheckBox_Click(Object sender, EventArgs e)
+        {
+            Globals.NotStrictAPICheck.SetValue(_checkHashCheckBox.Checked);
         }
 
         private void OnResetSettingsButtonClick(out DialogResult dialogResult)
@@ -148,9 +154,16 @@ namespace Derpi_Downloader.Forms
                 return;
             }
 
+            Globals.ExistFileRewrite.ResetValue();
+            Globals.QueueAutoDownload.ResetValue();
+            Globals.ForceClose.ResetValue();
+            Globals.ConvertSVGToPNG.ResetValue();
+            Globals.NotStrictAPICheck.ResetValue();
+            Globals.CheckHash.ResetValue();
             _downloadPathTextBox.Text = Globals.DefaultDownloadFolder;
             _downloadNameTextBox.Text = Globals.DefaultDownloadFileName;
             LocalizationBase.UpdateLocalization(LocalizationBase.CurrentCulture.LCID);
+            Globals.Config.SaveProperties();
         }
 
         private void OnResetAllSettingsButtonClick()
@@ -164,6 +177,7 @@ namespace Derpi_Downloader.Forms
             _languageImagedComboBox.SelectedIndex = 0;
             _proxyForm.ResetProxy();
             _apiControl.ResetAPI();
+            Globals.Config.SaveProperties();
         }
 
         public void Save()

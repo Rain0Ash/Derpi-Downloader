@@ -11,10 +11,12 @@ using Common_Library.GUI.WinForms.ToolTips;
 using Common_Library.Images;
 using Common_Library.Utils;
 using Common_Library.Utils.IO;
+using Derpi_Downloader.Forms;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
+using Derpi_Downloader.Settings.Forms;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public sealed partial class SettingsForm
     {
@@ -37,6 +39,7 @@ namespace Derpi_Downloader.Forms
             _forceCloseCheckBox = new CheckBox();
             _convertSVGToPNGCheckBox = new CheckBox();
             _notStrictAPICheckCheckBox = new CheckBox();
+            _checkHashCheckBox = new CheckBox();
             _pathLabel = new AdditionalsLabel();
             _proxyForm = new ProxyForm();
             SuspendLayout();
@@ -100,7 +103,7 @@ namespace Derpi_Downloader.Forms
             _downloadNameTextBox.PathDialogButtonEnabled = false;
             _downloadNameTextBox.UpdateAvailableFormatingParts(typeof(Json.Image));
             _downloadNameTextBox.TextChanged += (sender, args) => OnDownloadName_TextChanged_PathCheck();
-            _downloadNameTextBox.LostFocus += (sender, args) => OnLostFocusNameCheck();
+            _downloadNameTextBox.TextBox.LostFocus += (sender, args) => OnLostFocusNameCheck();
 
             Globals.CurrentDownloadFolder.Changed += OnCurrentPathChanged;
             Globals.CurrentDownloadFileName.Changed += OnCurrentPathChanged;
@@ -140,6 +143,13 @@ namespace Derpi_Downloader.Forms
             _notStrictAPICheckCheckBox.AutoSize = true;
             _notStrictAPICheckCheckBox.Checked = Globals.NotStrictAPICheck.GetValue();
             _notStrictAPICheckCheckBox.CheckedChanged += OnNotStrictAPICheckCheckBox_Click;
+            
+            _checkHashCheckBox.Location = new Point(260, 200);
+            _checkHashCheckBox.MinimumSize = new Size(0, 20);
+            _checkHashCheckBox.AutoSize = true;
+            _checkHashCheckBox.Checked = Globals.CheckHash.GetValue();
+            _checkHashCheckBox.CheckedChanged += OnCheckHashCheckBox_Click;
+            _checkHashCheckBox.Enabled = false;
 
             MinimizeBox = false;
             MaximizeBox = false;
@@ -164,6 +174,7 @@ namespace Derpi_Downloader.Forms
             Controls.Add(_forceCloseCheckBox);
             Controls.Add(_convertSVGToPNGCheckBox);
             Controls.Add(_notStrictAPICheckCheckBox);
+            Controls.Add(_checkHashCheckBox);
             Controls.Add(_pathLabel);
             Icon = ImageUtils.IconFromImage(Images.Line.Settings);
             ResumeLayout();
@@ -186,6 +197,7 @@ namespace Derpi_Downloader.Forms
         private CheckBox _forceCloseCheckBox;
         private CheckBox _convertSVGToPNGCheckBox;
         private CheckBox _notStrictAPICheckCheckBox;
+        private CheckBox _checkHashCheckBox;
         private AdditionalsLabel _pathLabel;
         private ProxyForm _proxyForm;
     }

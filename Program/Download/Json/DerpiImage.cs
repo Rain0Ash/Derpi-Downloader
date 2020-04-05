@@ -68,6 +68,10 @@ namespace Derpi_Downloader.Json
         [FormatedField(uniqueness: true)]
         public Int32 id { get; set; }
 
+        [JsonIgnore]
+        [FormatedField]
+        public String query { get; set; }
+        
         [JsonProperty]
         public DateTime created_at { get; set; }
 

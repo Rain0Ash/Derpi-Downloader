@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Common_Library.Logger;
+using Common_Library.Utils;
 using Common_Library.Utils.IO;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
@@ -34,7 +35,7 @@ namespace Derpi_Downloader.Download
 
             if (!DirectoryUtils.TryCreateDirectory(formatedDirectoryPath, PathAction.None))
             {
-                Log.Add(new LogMessage(Globals.Localization.CreateDirectoryError, MessageType.CriticalWarning));
+                Log.Add(new LogMessage($"{Globals.Localization.CreateDirectoryError}: {formatedDirectoryPath}", MessageType.CriticalWarning));
                 IsInvalid = true;
                 return;
             }

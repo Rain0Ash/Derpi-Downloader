@@ -2,11 +2,10 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using Common_Library.GUI.WinForms.Forms;
+using Derpi_Downloader.Settings;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.Additionals.Forms
 {
-    using Derpi_Downloader.Settings;
-
     public partial class AdditionalsForm : ParentForm
     {
         public AdditionalsForm()
@@ -14,7 +13,7 @@ namespace Derpi_Downloader.Forms
             InitializeComponent();
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.AdditionalFunctions;
             _makeAuthorsListButton.Text = Globals.Localization.UnavailableFunction;

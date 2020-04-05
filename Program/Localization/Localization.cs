@@ -50,8 +50,10 @@ namespace Derpi_Downloader.Localization
         public CultureStrings ForceCloseCheckBox;
         public CultureStrings ConvertSVGToPNGCheckBox;
         public CultureStrings NotStrictAPICheckCheckBox;
+        public CultureStrings CheckHashCheckBox;
         public CultureStrings LanguageLabel;
         public CultureStrings DownloadForm;
+        public CultureStrings DownloadFormTootTip;
         public CultureStrings SearchQueryLabel;
         public CultureStrings DownloadPathLabel;
         public CultureStrings AddTaskButton;
@@ -110,6 +112,8 @@ namespace Derpi_Downloader.Localization
         public CultureStrings ExistFileRewriteCheckBoxToolTip;
         public CultureStrings QueueAutoDownloadCheckBoxToolTip;
         public CultureStrings ConvertSVGToPNGCheckBoxToolTip;
+        public CultureStrings CloseProgramQuestionTitle;
+        public CultureStrings CloseProgramQuestionText;
         public CultureStrings Exit;
         public CultureStrings OK;
         public CultureStrings Yes;
@@ -308,12 +312,24 @@ namespace Derpi_Downloader.Localization
             
             NotStrictAPICheckCheckBox = new CultureStrings(
                 "Not strict API check",
-                "Не строгая проверка API");
+                "Нестрогая проверка API");
+            
+            CheckHashCheckBox = new CultureStrings(
+                "Check image hash",
+                "Проверять хэш изображения");
 
             ConvertSVGToPNGCheckBoxToolTip = new CultureStrings(
                 "Convert SVG image to PNG and save both",
                 "Конвертировать SVG изображение в PNG и сохранять две версии",
                 "Konvertieren Sie das SVG-Bild in PNG und speichern Sie beide");
+            
+            CloseProgramQuestionTitle = new CultureStrings(
+                "Close program?",
+                "Закрыть программу?");
+            
+            CloseProgramQuestionText = new CultureStrings(
+                "Downloads not completed\nDo you want to close the program?",
+                "Остались незавершенные загрузки\nВы действительно хотите закрыть программу?");
 
             LanguageLabel = new CultureStrings(
                 "Language",
@@ -325,6 +341,10 @@ namespace Derpi_Downloader.Localization
                 "Новое скачивание",
                 "Neuer download");
 
+            DownloadFormTootTip = new CultureStrings(
+                "New download\nShift - nonclosable window\nCtrl - default control",
+                "Новое скачивание\nShift - не закрывать окно\nCtrl - стандартная задача");
+            
             SearchQueryLabel = new CultureStrings(
                 "Image query",
                 "Поисковый запрос",
@@ -704,8 +724,7 @@ namespace Derpi_Downloader.Localization
                 "No images found",
                 "Не найдены изображения",
                 "Keine Bilder gefunden");
-
-            //TODO:
+            
             CantFoundDuplicateImage = new CultureStrings(
                 "Can't found duplicate image",
                 "Не найдено дублирующее изображения",
@@ -823,6 +842,14 @@ namespace Derpi_Downloader.Localization
                 "ID of image",
                 "ID изображения",
                 "ID des Bildes");
+            
+            AboutFormatDictionary["query"] = new CultureStrings(
+                "Escaped search query",
+                "Экранированный поисковый запрос");
+            
+            AboutFormatDictionary["time"] = new CultureStrings(
+                "Created at date",
+                "Дата создания изображения");
 
             AboutFormatDictionary["artist"] = new CultureStrings(
                 "First artist of image",

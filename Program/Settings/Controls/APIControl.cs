@@ -1,13 +1,13 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System;
 using Common_Library.GUI.WinForms.Controls;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Derpi_Downloader.API;
-using Derpi_Downloader.Settings;
 
-namespace System.Windows.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public sealed partial class APIControl : LocalizationControl
     {
@@ -28,7 +28,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             _apiLabel.Text = Globals.Localization.APILabel;
             _saveAPIButton.Text = Globals.Localization.SaveAPIButton;

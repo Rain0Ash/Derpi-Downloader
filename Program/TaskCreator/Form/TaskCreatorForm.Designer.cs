@@ -9,9 +9,10 @@ using Derpi_Downloader.Settings;
 using Common_Library.Utils;
 using Common_Library.Images;
 using Common_Library.Utils.IO;
+using Derpi_Downloader.Forms;
 using Path = Common_Library.LongPath.Path;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.TaskCreator.Forms
 {
     public sealed partial class TaskCreatorForm
     {

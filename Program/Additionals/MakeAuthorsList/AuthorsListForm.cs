@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Timers;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Logger;
 using Common_Library.Utils;
@@ -30,7 +31,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _includePathListBox.ListBox.Add(pathObject);
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.MakeAuthorsListButtonToolTip;
             _includePathLabel.Text = Globals.Localization.IncludedPathsLabel;
@@ -49,7 +50,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         {
             _startButton.Enabled = false;
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCreating, MessageType.Good));
-            using AuthorsList authorsList = new AuthorsList(_includePathListBox.ListBox.Items.OfType<FSWatcher>(),
+            AuthorsList authorsList = new AuthorsList(_includePathListBox.ListBox.Items.OfType<FSWatcher>(),
                 _excludePathListBox.ListBox.Items.OfType<FSWatcher>());
 
             if (authorsList.FilesForAnalyzeFound <= 0)
@@ -65,12 +66,17 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _progressBar.Maximum = authorsList.FilesForAnalyzeFound;
             _stepLabel.CurrentValue = 0;
             _stepLabel.MaximumValue = authorsList.FilesForAnalyzeFound;
-            authorsList.FileAnalyzed += () =>
-            {
-                _progressBar.PerformStep();
-                _stepLabel.PerformStep();
-            };
+
+            Timer timer = new Timer(10);
+
+            timer.Elapsed += (sender, args) => _progressBar.Value = _stepLabel.CurrentValue = authorsList.CurrentFilesAnalyzed;
+            
+            timer.Start();
+                
             _artistsRichTextBox.Text = await authorsList.GetArtistsAsync().ConfigureAwait(true);
+            
+            timer.Stop();
+            timer.Dispose();
 
             Globals.Logger.Log(new LogMessage(Globals.Localization.FilesAnalyzed, MessageType.Action, new Object[] {authorsList.CurrentFilesAnalyzed}));
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCompleted, MessageType.Good));

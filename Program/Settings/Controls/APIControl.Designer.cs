@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System.Drawing;
+using System.Windows.Forms;
 using Common_Library.GUI.WinForms.ToolTips;
 using Common_Library.Images;
 using Common_Library.Utils.OS;
@@ -9,7 +10,7 @@ using Derpi_Downloader.API;
 using Derpi_Downloader.Localization;
 using Derpi_Downloader.Settings;
 
-namespace System.Windows.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public sealed partial class APIControl
     {
@@ -44,7 +45,7 @@ namespace System.Windows.Forms
             _goToAPIPageButton.Location = new Point(172, 17);
             _goToAPIPageButton.Size = new Size(30, 29);
             _goToAPIPageButton.UseVisualStyleBackColor = true;
-            _goToAPIPageButton.Image = new Bitmap(Images.Basic.Question, new Size(_goToAPIPageButton.Size.Width / 2, _goToAPIPageButton.Size.Height / 2));
+            _goToAPIPageButton.Image = new Bitmap(Images.Lineal.WWW, new Size(_goToAPIPageButton.Size.Width / 2, _goToAPIPageButton.Size.Height / 2));
             _goToAPIPageButton.Click += (sender, args) => ProcessUtils.OpenBrowser(ProgramLocalization.DerpiBooruProfileLink);
 
             _saveAPIButton.Location = new Point(202, 17);

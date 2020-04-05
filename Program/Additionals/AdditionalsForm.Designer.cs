@@ -9,7 +9,7 @@ using Common_Library.Images;
 using Common_Library.Utils;
 using Derpi_Downloader.Additionals.DuplicateSearch;
 
-namespace Derpi_Downloader.Forms
+namespace Derpi_Downloader.Additionals.Forms
 {
     using Derpi_Downloader.Additionals.AuthorsList;
 

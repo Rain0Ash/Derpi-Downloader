@@ -1,14 +1,16 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Common_Library.Utils.Network;
 using Derpi_Downloader.Settings;
 
-namespace System.Windows.Forms
+namespace Derpi_Downloader.Settings.Forms
 {
     public partial class ProxyForm : ParentForm
     {
@@ -17,7 +19,7 @@ namespace System.Windows.Forms
             InitializeComponent();
         }
 
-        protected override void UpdateText()
+        public override void UpdateText()
         {
             Text = Globals.Localization.ProxySettings;
             _addressLabel.Text = Globals.Localization.ProxyAddressLabel;
