@@ -21,25 +21,6 @@ namespace Derpi_Downloader.Forms
 {
     public partial class MainForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private readonly System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(Boolean disposing)
-        {
-            if (disposing)
-            {
-                components?.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
         public event TaskCreatorForm.DownloadRequestHandler AddedRequest;
 
         public void AddRequest(Object request)
@@ -112,7 +93,7 @@ namespace Derpi_Downloader.Forms
                     return;
                 }
 
-                OpenTaskCreatorForm();
+                OpenTaskCreatorForm(ModifierKeys.HasFlag(Keys.Shift));
             };
             Globals.APIKey.Changed += () => { _taskCreatorButton.Enabled = Globals.APIKey.IsValid; };
             Globals.APIKey.Changed += () =>
@@ -164,7 +145,10 @@ namespace Derpi_Downloader.Forms
 
             _queueRequestListBox.Size = new Size(LayoutGUI.QueueRequestListBoxWidth, _logRichTextBox.Size.Height);
             _queueRequestListBox.Location = new Point(_logRichTextBox.Location.X + _logRichTextBox.Size.Width, _logRichTextBox.Location.Y);
-            _queueRequestListBox.AddButton.Click += (sender, args) => { OpenTaskCreatorForm(); };
+            _queueRequestListBox.AddButton.Click += (sender, args) =>
+            {
+                OpenTaskCreatorForm(ModifierKeys.HasFlag(Keys.Shift));
+            };
             _queueRequestListBox.ListBox.ItemAdded += (obj, index) =>
             {
                 if (obj is DownloadRequest request)

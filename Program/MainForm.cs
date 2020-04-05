@@ -93,11 +93,11 @@ namespace Derpi_Downloader.Forms
             }
         }
 
-        private void OpenTaskCreatorForm()
+        private void OpenTaskCreatorForm(Boolean nonclosable = false)
         {
             TaskCreatorForm taskCreatorForm = new TaskCreatorForm();
             taskCreatorForm.AddTaskControl += request => { _downloadControl.AddDownloadTaskControl(request); };
-            taskCreatorForm.IsManualClose = ModifierKeys == Keys.Shift;
+            taskCreatorForm.IsManualClose = nonclosable;
             taskCreatorForm.ShowDialog();
         }
 

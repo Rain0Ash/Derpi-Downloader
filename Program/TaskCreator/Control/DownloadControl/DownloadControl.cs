@@ -23,21 +23,25 @@ namespace Derpi_Downloader.TaskCreator.Forms
         {
             _form = form;
             InitializeComponent();
-            _form.AddedRequest += request =>
+            _form.AddedRequest += AddRequest;
+        }
+
+        private void AddRequest(DownloadRequest request)
+        {
+            if (CurrentTasks >= MaximumTasks)
             {
-                if (CurrentTasks >= MaximumTasks)
+                DownloadTaskControl completedTask = _taskerList.FirstOrDefault(TaskRemovable);
+
+                if (completedTask == null)
                 {
-                    DownloadTaskControl completedTask = _taskerList.FirstOrDefault(TaskRemovable);
-
-                    if (completedTask != null)
-                    {
-                        RemoveTask(completedTask);
-                    }
+                    return;
                 }
+                
+                RemoveTask(completedTask);
+            }
 
-                AddDownloadTaskControl(request);
-                _form.RemoveRequest(request);
-            };
+            AddDownloadTaskControl(request);
+            _form.RemoveRequest(request);
         }
 
         private static Boolean TaskRemovable(DownloadTaskControl task)
@@ -87,7 +91,10 @@ namespace Derpi_Downloader.TaskCreator.Forms
                     downloadTaskControl.Close();
                 }
             };
-            downloadTaskControl.NeedClosing += () => { RemoveTask(downloadTaskControl); };
+            downloadTaskControl.NeedClosing += () =>
+            {
+                RemoveTask(downloadTaskControl);
+            };
             downloadTaskControl.NeedClosing += () =>
             {
                 List<Object> invalidRequests = new List<Object>();
@@ -126,7 +133,7 @@ namespace Derpi_Downloader.TaskCreator.Forms
 
             ResumeLayout();
         }
-
+        
         private void AddTask(DownloadTaskControl downloadTaskControl)
         {
             _taskerList.Add(downloadTaskControl);
