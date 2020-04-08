@@ -3,10 +3,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Net;
 using System.Security.AccessControl;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +15,6 @@ using Common_Library.Crypto;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Localization;
 using Common_Library.Logger;
-using Common_Library.LongPath;
 using Common_Library.Utils.IO;
 using Common_Library.Utils.Math;
 using Common_Library.Utils.Network;

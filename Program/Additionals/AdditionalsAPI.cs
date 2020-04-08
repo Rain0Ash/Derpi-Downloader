@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Common_Library.LongPath;
 using Common_Library.Utils;
 using Common_Library.Utils.IO;
 using Common_Library.Watchers;
@@ -27,6 +27,9 @@ namespace Derpi_Downloader.Additionals
         
         private static readonly Regex RegexExt = new Regex($"^.*\\.({String.Join("|", AllowedExtensions.Select(ext => ext.Split(".")[1]))})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        public const String DefaultDerpiBooruNamePattern = "^(?<id>\\d+)__.+(artist-colon-(?<artist>[a-zA-Z0-9-+]+))+.*$";
+        public const String DefaultDeviantArtNamePattern = "^(?<name>.+)_by_(?<artist>[a-zA-Z0-9]+)_(?<id>[a-zA-Z0-9]+).*$";
+        
         public static IEnumerable<String> GetFiles(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths)
         {
             HashSet<String> includedFolders = new HashSet<String>();

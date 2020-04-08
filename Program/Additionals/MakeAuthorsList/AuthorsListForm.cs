@@ -2,8 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
+using System.IO;
 using System.Linq;
-using System.Timers;
+using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Logger;
 using Common_Library.Utils;
@@ -22,13 +23,15 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
             String path = StringUtils.BeforeFormatVariables(Globals.CurrentDownloadPath);
 
-            if (String.IsNullOrEmpty(path) || !Common_Library.LongPath.Directory.Exists(path))
+            if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
             {
                 return;
             }
 
             FSWatcher pathObject = new FSWatcher(path, PathType.Folder, PathStatus.Exist) {Recursive = true};
-            _includePathListBox.ListBox.Add(pathObject);
+            _includePathListView.Add(pathObject);
+            _regexView.Add(AdditionalsAPI.DefaultDerpiBooruNamePattern);
+            _regexView.Add(AdditionalsAPI.DefaultDeviantArtNamePattern);
         }
 
         public override void UpdateText()
@@ -38,20 +41,16 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _excludePathLabel.Text = Globals.Localization.ExcludedPathsLabel;
             _artistsListLabel.Text = Globals.Localization.ArtistsListLabel;
             _startButton.Text = Globals.Localization.Perform;
-            _includePathListBox.RecursiveButtonToolTip = Globals.Localization.ChangePathRecursiveToolTip;
-            _includePathListBox.AddButtonToolTip = Globals.Localization.AddPathToolTip;
-            _includePathListBox.RemoveButtonToolTip = Globals.Localization.RemovePathToolTip;
-            _excludePathListBox.RecursiveButtonToolTip = Globals.Localization.ChangePathRecursiveToolTip;
-            _excludePathListBox.AddButtonToolTip = Globals.Localization.AddPathToolTip;
-            _excludePathListBox.RemoveButtonToolTip = Globals.Localization.RemovePathToolTip;
         }
 
         private async void ShowArtists()
         {
             _startButton.Enabled = false;
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCreating, MessageType.Good));
-            AuthorsList authorsList = new AuthorsList(_includePathListBox.ListBox.Items.OfType<FSWatcher>(),
-                _excludePathListBox.ListBox.Items.OfType<FSWatcher>());
+            AuthorsList authorsList = new AuthorsList(
+                _includePathListView.Items.OfType<ListViewItem>().Select(item => item.Tag is FSWatcher watcher ? watcher : new FSWatcher(item.Text)),
+                _excludePathListView.Items.OfType<ListViewItem>().Select(item => item.Tag is FSWatcher watcher ? watcher : new FSWatcher(item.Text)),
+                            _regexView.Items.OfType<ListViewItem>().Select(item => item.Text));
 
             if (authorsList.FilesForAnalyzeFound <= 0)
             {
@@ -67,7 +66,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _stepLabel.CurrentValue = 0;
             _stepLabel.MaximumValue = authorsList.FilesForAnalyzeFound;
 
-            Timer timer = new Timer(10);
+            System.Timers.Timer timer = new System.Timers.Timer(10);
 
             timer.Elapsed += (sender, args) => _progressBar.Value = _stepLabel.CurrentValue = authorsList.CurrentFilesAnalyzed;
             
@@ -77,6 +76,8 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             
             timer.Stop();
             timer.Dispose();
+            
+            _progressBar.Value = _stepLabel.CurrentValue = authorsList.CurrentFilesAnalyzed;
 
             Globals.Logger.Log(new LogMessage(Globals.Localization.FilesAnalyzed, MessageType.Action, new Object[] {authorsList.CurrentFilesAnalyzed}));
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCompleted, MessageType.Good));

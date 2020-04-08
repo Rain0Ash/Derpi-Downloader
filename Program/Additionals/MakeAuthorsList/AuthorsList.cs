@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common_Library;
-using Common_Library.LongPath;
 using Common_Library.Utils;
 using Common_Library.Watchers;
 
@@ -18,8 +17,6 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 {
     public class AuthorsList
     {
-        private const String Artist = "artist";
-
         public Int32 FilesForAnalyzeFound { get; }
 
         private Int32 _currentFilesAnalyzed;
@@ -39,12 +36,12 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         private readonly IEnumerable<FSWatcher> _includedPaths;
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly IEnumerable<FSWatcher> _excludedPaths;
-        private readonly Dictionary<String, String> _regexDictionary;
+        private readonly IEnumerable<String> _regexPatterns;
 
         private readonly IEnumerable<String> _files;
 
         public AuthorsList(IEnumerable<FSWatcher> includedPaths, IEnumerable<FSWatcher> excludedPaths = null,
-            Dictionary<String, String> regexDictionary = null)
+            IEnumerable<String> regexPatterns = null)
         {
             includedPaths = includedPaths?.ToArray();
 
@@ -57,15 +54,15 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _includedPaths = includedPaths;
             _excludedPaths = excludedPaths;
 
-            if (regexDictionary?.Keys.Any() != true)
+            if (regexPatterns?.Any() != true)
             {
-                regexDictionary = new Dictionary<String, String>
+                regexPatterns = new List<String>
                 {
-                    {@"^\d+__.+$", $@"(?<id>\d+)|(artist-colon-(?<{Artist}>[a-zA-Z0-9-+]+))"}
+                    AdditionalsAPI.DefaultDerpiBooruNamePattern
                 };
             }
 
-            _regexDictionary = regexDictionary;
+            _regexPatterns = regexPatterns;
 
             _files = AdditionalsAPI.GetFiles(_includedPaths, _excludedPaths);
 
@@ -100,8 +97,8 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         {
             try
             {
-                String pattern = _regexDictionary
-                    .FirstOrDefault(regex => regex.Value != null && Regex.IsMatch(file, regex.Key)).Value;
+                String pattern = _regexPatterns
+                    .FirstOrDefault(regex => Regex.IsMatch(file, regex));
 
                 Regex selectArtistRegex;
                 try
@@ -124,7 +121,7 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
                 return selectArtistRegex
                     .MatchNamedCaptures(file)
-                    .Where(artistPair => artistPair.Key == Artist)
+                    .Where(artistPair => artistPair.Key == "artist")
                     .SelectMany(artistPair => artistPair.Value)
                     .Select(artist => artist.Replace("-dash-", "-").Replace("+", " ")).ToArray();
             }

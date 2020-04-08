@@ -2,12 +2,15 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using Common_Library.Images;
 using Common_Library.Utils;
 using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Labels;
 using Common_Library.GUI.WinForms.ListBoxes;
+using Common_Library.GUI.WinForms.ListViews;
+using Common_Library.Utils.IO;
 using Common_Library.Utils.Math;
 
 namespace Derpi_Downloader.Additionals.AuthorsList
@@ -17,12 +20,13 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         private void InitializeComponent()
         {
             _includePathLabel = new Label();
-            _includePathListBox = new AdvancedPathListBox();
+            _includePathListView = new PathListView();
             _excludePathLabel = new Label();
-            _excludePathListBox = new AdvancedPathListBox();
+            _excludePathListView = new PathListView();
             _artistsListLabel = new Label();
             _artistsRichTextBox = new RichTextBox();
             _regexLabel = new Label();
+            _regexView = new EditableListView();
             _startButton = new Button();
             _progressBar = new ProgressBar();
             _stepLabel = new CurrentMaxValueLabel();
@@ -32,17 +36,36 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             _includePathLabel.TextAlign = ContentAlignment.MiddleLeft;
             _includePathLabel.AutoSize = false;
 
-            _includePathListBox.Location = new Point(0, 20);
-            _includePathListBox.Size = new Size(300, 60);
+            _includePathListView.Location = new Point(0, 20);
+            _includePathListView.Size = new Size(300, 60);
+            _includePathListView.HeaderStyle = ColumnHeaderStyle.None;
+            _includePathListView.View = View.Details;
+            _includePathListView.PathType = PathType.Folder;
+            _includePathListView.PathStatus = PathStatus.Exist;
 
-            _excludePathLabel.Location = new Point(300, 0);
+            _excludePathLabel.Location = new Point(305, 0);
             _excludePathLabel.Size = new Size(300, 15);
             _excludePathLabel.TextAlign = ContentAlignment.MiddleLeft;
             _excludePathLabel.AutoSize = false;
 
-            _excludePathListBox.Location = new Point(300, 20);
-            _excludePathListBox.Size = new Size(300, 60);
+            _excludePathListView.Location = new Point(305, 20);
+            _excludePathListView.Size = new Size(300, 60);
+            _excludePathListView.HeaderStyle = ColumnHeaderStyle.None;
+            _excludePathListView.View = View.Details;
+            _excludePathListView.PathType = PathType.Folder;
+            _excludePathListView.PathStatus = PathStatus.Exist;
 
+            _regexLabel.Location = new Point(305, 78);
+            _regexLabel.Text = "regex";
+            _regexLabel.TextAlign = ContentAlignment.MiddleLeft;
+            _regexLabel.AutoSize = true;
+
+            _regexView.Location = new Point(305, 95);
+            _regexView.Size = new Size(300, 60);
+            _regexView.HeaderStyle = ColumnHeaderStyle.None;
+            _regexView.View = View.Details;
+            _regexView.ValidateFunc = obj => RegexUtils.IsValidRegex(obj.ToString());
+            
             _artistsListLabel.Location = new Point(0, 78);
             _artistsListLabel.Size = new Size(300, 15);
             _artistsListLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -77,9 +100,11 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             AutoScaleMode = AutoScaleMode.Font;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Controls.Add(_includePathLabel);
-            Controls.Add(_includePathListBox);
+            Controls.Add(_includePathListView);
             Controls.Add(_excludePathLabel);
-            Controls.Add(_excludePathListBox);
+            Controls.Add(_excludePathListView);
+            Controls.Add(_regexLabel);
+            Controls.Add(_regexView);
             Controls.Add(_artistsListLabel);
             Controls.Add(_artistsRichTextBox);
             Controls.Add(_startButton);
@@ -89,12 +114,13 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         }
 
         private Label _includePathLabel;
-        private AdvancedPathListBox _includePathListBox;
+        private PathListView _includePathListView;
         private Label _excludePathLabel;
-        private AdvancedPathListBox _excludePathListBox;
+        private PathListView _excludePathListView;
         private Label _artistsListLabel;
         private RichTextBox _artistsRichTextBox;
         private Label _regexLabel;
+        private EditableListView _regexView;
         private ProgressBar _progressBar;
         private CurrentMaxValueLabel _stepLabel;
         private Button _startButton;

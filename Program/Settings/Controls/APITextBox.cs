@@ -14,6 +14,7 @@ namespace Derpi_Downloader.Settings.Forms
     {
         public APITextBox()
         {
+            ValidateFunc = obj => DerpiAPI.CheckAPI(Text);
             MaxLength = DerpiAPI.LengthAPI;
             CheckValidFormat();
         }
@@ -38,11 +39,6 @@ namespace Derpi_Downloader.Settings.Forms
             {
                 BackColor = Color.Red;
             }
-        }
-
-        public override Boolean CheckValidFormat()
-        {
-            return DerpiAPI.CheckAPI(Text);
         }
     }
 }

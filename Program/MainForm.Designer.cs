@@ -149,7 +149,7 @@ namespace Derpi_Downloader.Forms
             {
                 OpenTaskCreatorForm(ModifierKeys.HasFlag(Keys.Shift));
             };
-            _queueRequestListBox.ListBox.ItemAdded += (obj, index) =>
+            _queueRequestListBox.ListBox.ItemAdded += (index, obj) =>
             {
                 if (obj is DownloadRequest request)
                 {

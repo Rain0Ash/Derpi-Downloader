@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Common_Library;
@@ -12,7 +13,6 @@ using Common_Library.Objects;
 using Common_Library.Utils.Math;
 using Derpi_Downloader.Json;
 using Derpi_Downloader.Settings;
-using Path = Common_Library.LongPath.Path;
 
 // ReSharper disable ConvertToAutoProperty
 

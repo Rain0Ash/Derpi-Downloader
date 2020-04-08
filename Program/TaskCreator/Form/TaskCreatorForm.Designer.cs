@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Common_Library.GUI.WinForms.ToolTips;
 using Derpi_Downloader.Json;
@@ -10,7 +11,6 @@ using Common_Library.Utils;
 using Common_Library.Images;
 using Common_Library.Utils.IO;
 using Derpi_Downloader.Forms;
-using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.TaskCreator.Forms
 {

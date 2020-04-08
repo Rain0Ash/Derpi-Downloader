@@ -3,6 +3,7 @@
 
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 using Common_Library.GUI.WinForms.Labels;
 using Common_Library.GUI.WinForms.RichTextBoxes;
 using Common_Library.GUI.WinForms.ToolTips;
@@ -10,8 +11,6 @@ using Common_Library.Utils.IO;
 using Common_Library.Utils.Math;
 using Derpi_Downloader.Forms;
 using Derpi_Downloader.Settings;
-using Derpi_Downloader.Json;
-using Path = Common_Library.LongPath.Path;
 
 namespace Derpi_Downloader.TaskCreator.Forms
 {

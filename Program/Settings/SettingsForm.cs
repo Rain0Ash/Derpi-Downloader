@@ -3,11 +3,11 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using Common_Library.GUI.WinForms.Forms;
 using Common_Library.Images;
 using Common_Library.Localization;
-using Common_Library.LongPath;
 using Common_Library.Utils.IO;
 
 namespace Derpi_Downloader.Settings.Forms

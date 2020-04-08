@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using System;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using Common_Library;
@@ -9,7 +10,6 @@ using Common_Library.Config;
 using Common_Library.Crypto;
 using Common_Library.Localization;
 using Common_Library.Logger;
-using Common_Library.LongPath;
 using Common_Library.Utils.IO;
 using Common_Library.Utils.Network;
 using Derpi_Downloader.API;
