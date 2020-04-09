@@ -42,13 +42,11 @@ namespace Derpi_Downloader.Additionals
                     continue;
                 }
 
+                includedFolders.Add(path.Path);
+                
                 if (path.Recursive)
                 {
                     includedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
-                }
-                else
-                {
-                    includedFolders.Add(path.Path);
                 }
             }
 
@@ -61,13 +59,11 @@ namespace Derpi_Downloader.Additionals
                         continue;
                     }
 
+                    excludedFolders.Add(path.Path);
+                    
                     if (path.Recursive)
                     {
                         excludedFolders.UnionWith(path.GetEntries(PathType.Folder, true));
-                    }
-                    else
-                    {
-                        excludedFolders.Add(path.Path);
                     }
                 }
             }

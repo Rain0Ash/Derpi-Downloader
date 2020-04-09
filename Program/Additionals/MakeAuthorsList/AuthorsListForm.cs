@@ -30,8 +30,8 @@ namespace Derpi_Downloader.Additionals.AuthorsList
 
             FSWatcher pathObject = new FSWatcher(path, PathType.Folder, PathStatus.Exist) {Recursive = true};
             _includePathListView.Add(pathObject);
-            _regexView.Add(AdditionalsAPI.DefaultDerpiBooruNamePattern);
-            _regexView.Add(AdditionalsAPI.DefaultDeviantArtNamePattern);
+            _regexListView.Add(AdditionalsAPI.DefaultDerpiBooruNamePattern);
+            _regexListView.Add(AdditionalsAPI.DefaultDeviantArtNamePattern);
         }
 
         public override void UpdateText()
@@ -46,15 +46,22 @@ namespace Derpi_Downloader.Additionals.AuthorsList
         private async void ShowArtists()
         {
             _startButton.Enabled = false;
+            _includePathListView.Enabled = false;
+            _excludePathListView.Enabled = false;
+            _regexListView.Enabled = false;
+            
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCreating, MessageType.Good));
             AuthorsList authorsList = new AuthorsList(
                 _includePathListView.Items.OfType<ListViewItem>().Select(item => item.Tag is FSWatcher watcher ? watcher : new FSWatcher(item.Text)),
                 _excludePathListView.Items.OfType<ListViewItem>().Select(item => item.Tag is FSWatcher watcher ? watcher : new FSWatcher(item.Text)),
-                            _regexView.Items.OfType<ListViewItem>().Select(item => item.Text));
+                            _regexListView.Items.OfType<ListViewItem>().Select(item => item.Text));
 
             if (authorsList.FilesForAnalyzeFound <= 0)
             {
                 Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListFilesNotFound, MessageType.Warning));
+                _includePathListView.Enabled = true;
+                _excludePathListView.Enabled = true;
+                _regexListView.Enabled = true;
                 _startButton.Enabled = true;
                 return;
             }
@@ -82,6 +89,9 @@ namespace Derpi_Downloader.Additionals.AuthorsList
             Globals.Logger.Log(new LogMessage(Globals.Localization.FilesAnalyzed, MessageType.Action, new Object[] {authorsList.CurrentFilesAnalyzed}));
             Globals.Logger.Log(new LogMessage(Globals.Localization.AuthorListCompleted, MessageType.Good));
 
+            _includePathListView.Enabled = true;
+            _excludePathListView.Enabled = true;
+            _regexListView.Enabled = true;
             _startButton.Enabled = true;
 
             if (this != ActiveForm)
